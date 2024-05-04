@@ -388,3 +388,108 @@ int user_change_password(string recovery_key, string new_password, string user_f
     return -1;
   }
 }
+
+/**
+ * @brief main menu.
+ *
+ * @return 0.
+ */
+int main_menu() {
+  while (true) {
+    printf("\n--------Main Menu--------");
+    printf("\n1-)Properties");
+    printf("\n2-)Tenants");
+    printf("\n3-)Rent Tracking");
+    printf("\n4-)Maintenance Tracking");
+    printf("\n5-)Log out");
+    printf("\nPlease enter a choice:");
+    int choice_main_menu;
+    scanf("%d", &choice_main_menu);
+
+    if (choice_main_menu == main_menu_choice.main_menu_property) {
+      //x_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_tenant) {
+      //x_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_rent_tracking) {
+      //x_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_maintenance) {
+      //x_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_log_out) {
+      break;
+    } else {
+      printf("Please input a correct choice.");
+      continue;
+    }
+  }
+
+  return 0;
+}
+
+
+/**
+ * @brief login menu.
+ *
+ * @return 0.
+ */
+int login_menu() {
+  string user_name;
+  string password;
+  string user_file = "user.bin";
+  printf("Please enter your username:");
+  scanf("%s", user_name);
+  printf("\nPlease enter your password:");
+  scanf("%s", password);
+
+  if (user_login(user_name,password,user_file) == 0) {
+    main_menu();
+  }
+
+  return 0;
+};
+
+/**
+ * @brief register menu.
+ *
+ * @return 0.
+ */
+int register_menu() {
+  string user_name;
+  string password;
+  string recovery_key;
+  string user_file = "user.bin";
+  char warning;
+  printf("Please enter your new username:");
+  scanf("%s", user_name);
+  printf("\nPlease enter your new password:");
+  scanf("%s", password);
+  printf("\nPlease enter your new recovery key:");
+  scanf("%s", recovery_key);
+  printf("\n------------WARNING------------");
+  printf("\nThis process will delete all previous records, do you still wish to proceed?[Y/n]:");
+  scanf(" %c", &warning);
+
+  if (warning == 'Y') {
+    user_register(user_name,password,recovery_key,user_file);
+  } else {
+    printf("Process terminated.");
+  }
+
+  return 0;
+};
+
+/**
+ * @brief change pssword menu.
+ *
+ * @return 0.
+ */
+int change_password_menu() {
+  string password;
+  string recovery_key;
+  string user_file = "user.bin";
+  printf("Please enter your recovery key:");
+  scanf("%s", recovery_key);
+  printf("\nPlease enter your new password:");
+  scanf("%s", password);
+  user_change_password(recovery_key,password,user_file);
+  return 0;
+};

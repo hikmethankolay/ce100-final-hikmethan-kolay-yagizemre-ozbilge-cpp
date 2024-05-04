@@ -194,4 +194,32 @@ int user_login(string username = "None", string password = "None", string user_f
  */
 int user_change_password(string recovery_key = "None", string new_password = "None", string user_file = "user.bin");
 
+/**
+ * @brief main menu.
+ *
+ * @return 0.
+ */
+int main_menu();
+
+/**
+ * @brief login menu.
+ *
+ * @return 0.
+ */
+int login_menu();
+
+/**
+ * @brief register menu.
+ *
+ * @return 0.
+ */
+int register_menu();
+
+/**
+ * @brief change pssword menu.
+ *
+ * @return 0.
+ */
+int change_password_menu();
+
 #endif // FITNESS_MANAGEMENT_LIB_H
