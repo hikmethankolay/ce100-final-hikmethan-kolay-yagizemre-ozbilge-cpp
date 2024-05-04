@@ -426,7 +426,7 @@ int main_menu() {
 }
 
 /**
- * @brief main menu.
+ * @brief member_menu.
  *
  * @return 0.
  */
@@ -447,13 +447,13 @@ int member_menu() {
       file_read("membership_records.bin",'Y');
       continue;
     } else if (choice_member == sub_menu.sub_menu_add) {
-      //add_member_record();
+      add_member_record();
       continue;
     } else if (choice_member == sub_menu.sub_menu_edit) {
-      //edit_member_record();
+      edit_member_record();
       continue;
     } else if (choice_member == sub_menu.sub_menu_delete) {
-      //delete_member_record();
+      delete_member_record();
       continue;
     } else if (choice_member == sub_menu.sub_menu_return) {
       break;
@@ -465,6 +465,33 @@ int member_menu() {
 
   return 0;
 }
+
+/**
+ * @brief a fucntion for adding member record.
+ *
+ * @return 0.
+ */
+int add_member_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for editing member record.
+ *
+ * @return 0.
+ */
+int edit_member_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for deleting member record.
+ *
+ * @return 0.
+ */
+int delete_member_record() {
+  return 0;
+};
 
 /**
  * @brief subs menu.
@@ -488,13 +515,13 @@ int subs_menu() {
       file_read("subscription_records.bin",'Y');
       continue;
     } else if (choice_sub == sub_menu.sub_menu_add) {
-      //add_subs_record();
+      add_subs_record();
       continue;
     } else if (choice_sub == sub_menu.sub_menu_edit) {
-      //edit_subs_record();
+      edit_subs_record();
       continue;
     } else if (choice_sub == sub_menu.sub_menu_delete) {
-      //delete_subs_record();
+      delete_subs_record();
       continue;
     } else if (choice_sub == sub_menu.sub_menu_return) {
       break;
@@ -506,6 +533,33 @@ int subs_menu() {
 
   return 0;
 }
+
+/**
+ * @brief a fucntion for adding subscription record.
+ *
+ * @return 0.
+ */
+int add_subs_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for editing subscription record.
+ *
+ * @return 0.
+ */
+int edit_subs_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for deleting subscription record.
+ *
+ * @return 0.
+ */
+int delete_subs_record() {
+  return 0;
+};
 
 /**
  * @brief class menu.
@@ -549,6 +603,33 @@ int class_menu() {
 }
 
 /**
+ * @brief a fucntion for adding class record.
+ *
+ * @return 0.
+ */
+int add_class_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for editing class record.
+ *
+ * @return 0.
+ */
+int edit_class_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for deleting class record.
+ *
+ * @return 0.
+ */
+int delete_class_record() {
+  return 0;
+};
+
+/**
  * @brief payment menu.
  *
  * @return 0.
@@ -588,6 +669,33 @@ int payment_menu() {
 
   return 0;
 }
+
+/**
+ * @brief a fucntion for adding payment record.
+ *
+ * @return 0.
+ */
+int add_payment_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for editing payment record.
+ *
+ * @return 0.
+ */
+int edit_payment_record() {
+  return 0;
+};
+
+/**
+ * @brief a fucntion for deleting payment record.
+ *
+ * @return 0.
+ */
+int delete_payment_record() {
+  return 0;
+};
 
 /**
  * @brief login menu.

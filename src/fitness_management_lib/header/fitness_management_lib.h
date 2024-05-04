@@ -218,4 +218,33 @@ int register_menu();
  */
 int change_password_menu();
 
+/**
+ * @brief member_menu.
+ *
+ * @return 0.
+ */
+int member_menu();
+
+/**
+ * @brief subs menu.
+ *
+ * @return 0.
+ */
+int subs_menu();
+
+
+/**
+ * @brief class menu.
+ *
+ * @return 0.
+ */
+int class_menu();
+
+/**
+ * @brief payment menu.
+ *
+ * @return 0.
+ */
+int payment_menu();
+
 #endif // FITNESS_MANAGEMENT_LIB_H
