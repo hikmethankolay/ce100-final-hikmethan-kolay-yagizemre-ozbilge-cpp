@@ -14,16 +14,16 @@
  */
 using namespace std;
 
-struct member_record {
+struct memberRecord {
   int memberID;
   string fullName;
-  int birthDate;
+  string birthDate;
   string phoneNumber;
   string firstRegistrationDate;
 
 };
 
-struct subsciprtion_record {
+struct subsciprtionRecord {
   int memberID;
   string startingDate;
   string finishingDate;
@@ -31,7 +31,7 @@ struct subsciprtion_record {
 
 };
 
-struct class_record {
+struct classRecord {
   string tutor;
   string date;
   string startingHour;
@@ -39,7 +39,7 @@ struct class_record {
   int studentList[100];
 };
 
-struct payment_record {
+struct paymentRecord {
   int memberID;
   int paidAmount;
   string paymentDate;
