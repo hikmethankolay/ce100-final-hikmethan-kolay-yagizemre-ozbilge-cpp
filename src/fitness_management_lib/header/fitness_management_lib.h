@@ -14,6 +14,39 @@
  */
 using namespace std;
 
+struct member_record {
+  int memberID;
+  string fullName;
+  int birthDate;
+  string phoneNumber;
+  string firstRegistrationDate;
+
+};
+
+struct subsciprtion_record {
+  int memberID;
+  string startingDate;
+  string finishingDate;
+  string subscriptionTier;
+
+};
+
+struct class_record {
+  string tutor;
+  string date;
+  string startingHour;
+  string finishingHour;
+  int studentList[100];
+};
+
+struct payment_record {
+  int memberID;
+  int paidAmount;
+  string paymentDate;
+  string nextPaymentDate;
+
+};
+
 /**
  *
  * @brief Struct for login menu.
