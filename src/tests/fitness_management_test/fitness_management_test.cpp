@@ -1,4 +1,5 @@
 //#define ENABLE_FITNESS_TEST  // Uncomment this line to enable the Calculator tests
+#define UNIT_TESTING //A variable to control cin wihle unit testing
 
 #include "gtest/gtest.h"
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure

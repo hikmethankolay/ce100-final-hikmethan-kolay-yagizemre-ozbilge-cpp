@@ -224,6 +224,21 @@ int user_login(string username = "None", string password = "None", string user_f
 int user_change_password(string recovery_key = "None", string new_password = "None", string user_file = "user.bin");
 
 /**
+ * @brief generate secret keys for OTP algorithm.
+ *
+ * @return ss as string.
+ */
+string generateSecretKey();
+
+/**
+ * @brief OTP algorithm.
+ * @param secretKey genereted secret key
+ * @param length wanted length of the otp
+ * @return otp.
+ */
+string generateOTP(const string &secretKey, int length);
+
+/**
  * @brief main menu.
  *
  * @return 0.
@@ -279,5 +294,91 @@ int class_menu();
  * @return 0.
  */
 int payment_menu();
+
+/**
+ * @brief a fucntion for adding member record.
+ *
+ * @return 0.
+ */
+int add_member_record();
+
+/**
+ * @brief a fucntion for editing member record.
+ *
+ * @return 0 on success.
+ * @return -1 on fail.
+ */
+int edit_member_record();
+
+/**
+ * @brief a fucntion for deleting member record.
+ *
+ * @return 0.
+ */
+int delete_member_record();
+
+/**
+ * @brief a fucntion for adding subscription record.
+ *
+ * @return 0.
+ */
+int add_subs_record();
+
+/**
+ * @brief a fucntion for editing subscription record.
+ *
+ * @return 0 on success.
+ * @return -1 on fail.
+ */
+int edit_subs_record();
+
+/**
+ * @brief a fucntion for deleting subscription record.
+ *
+ * @return 0.
+ */
+int delete_subs_record();
+
+/**
+ * @brief a fucntion for adding class record.
+ *
+ * @return 0.
+ */
+int add_class_record();
+
+/**
+ * @brief a fucntion for editing class record.
+ *
+ * @return 0.
+ */
+int edit_class_record();
+
+/**
+ * @brief a fucntion for deleting class record.
+ *
+ * @return 0.
+ */
+int delete_class_record();
+
+/**
+ * @brief a fucntion for adding payment record.
+ *
+ * @return 0.
+ */
+int add_payment_record();
+
+/**
+ * @brief a fucntion for editing payment record.
+ *
+ * @return 0.
+ */
+int edit_payment_record();
+
+/**
+ * @brief a fucntion for deleting payment record.
+ *
+ * @return 0.
+ */
+int delete_payment_record();
 
 #endif // FITNESS_MANAGEMENT_LIB_H

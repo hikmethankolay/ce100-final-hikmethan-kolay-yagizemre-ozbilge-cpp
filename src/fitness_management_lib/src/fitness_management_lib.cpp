@@ -1,9 +1,19 @@
+/**
+ * @brief a variable to mute warnings.
+ *
+ */
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "../header/fitness_management_lib.h"
 #include <iostream>
 #include <limits>
 #include <fstream>
 #include <string>
 #include <codecvt>
+#include <random>
+#include <sstream>
+#include <iomanip>
+
 using namespace std;
 
 /**
@@ -70,7 +80,7 @@ char *file_read(const char *file_name, char print_to_console) {
   content[length] = '\0'; // Null-terminate the string
 
   if (print_to_console == 'Y') {
-    printf("%s",content); // Print the content to the console
+    cout << content; // Print the content to the console
   }
 
   myFile.close(); // Ensure the file is closed
@@ -106,7 +116,7 @@ int file_append(string file_name, string text) {
 
     myFile.close();
   } else {
-    printf("\nFile operation failed");
+    cout << "\nFile operation failed";
     return -1;
   }
 
@@ -154,7 +164,7 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
     if (line_number_to_edit > 0 && line_number_to_edit <= line_count) {
       lines[line_number_to_edit] = to_string(line_number_to_edit) + "-)" + new_line + "\n"; // Changes a member of Lines array to a new line with its line number
     } else {
-      printf("\nYou can only edit existing lines");
+      cout << "\nYou can only edit existing lines";
       return -1;
     }
 
@@ -169,10 +179,10 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
     }
 
     myFile.close();
-    printf("\nData successfully edited");
+    cout << "\nData successfully edited";
     return 0;
   } else {
-    printf("\nFile operation failed");
+    cout << "\nFile operation failed";
     return -1;
   }
 }
@@ -214,7 +224,7 @@ int file_line_delete(string file_name, int line_number_to_delete) {
 
       lines[line_count - 1] = ""; // Clears the last element of lines so the same thing wouldn't write to the file twice
     } else {
-      printf("\nYou can only erase existing lines");
+      cout << "\nYou can only erase existing lines";
       myFile.close();
       return -1;
     }
@@ -238,11 +248,11 @@ int file_line_delete(string file_name, int line_number_to_delete) {
       }
     }
 
-    printf("\nData successfully deleted");
+    cout << "\nData successfully deleted";
     myFile.close();
     return 0;
   } else {
-    printf("\nFile operation failed");
+    cout << "\nFile operation failed";
     return -1;
   }
 }
@@ -286,7 +296,7 @@ int user_login(string username, string password, string user_file) {
   myFile.open(user_file, ios::in | ios::binary); // Opens file with input tag
 
   if (!myFile.is_open()) {
-    printf("\nThere is no user info, Please register first.\n");
+    cout << "\nThere is no user info, Please register first.\n";
     return -1;
   }
 
@@ -308,17 +318,17 @@ int user_login(string username, string password, string user_file) {
   myFile.close();
 
   if (username == "None" && password == "None") {
-    printf("\nPlease enter username:");
-    scanf("%s",username);
-    printf("\nPlease enter password:");
-    scanf("%s",password);
+    cout << "\nPlease enter username:";
+    cin >> username;
+    cout << "\nPlease enter password:";
+    cin >> password;
   }
 
   if (username == username_read && password == password_read) {
-    printf("\nLogin Succesfull");
+    cout << "\nLogin Succesfull";
     return 0;
   } else {
-    printf("\nWrong username or password");
+    cout << "\nWrong username or password";
     return -1;
   }
 }
@@ -360,33 +370,72 @@ int user_change_password(string recovery_key, string new_password, string user_f
 
     myFile.close();
   } else {
-    printf("\nThere is no user info, Please register first.\n");
+    cout << "\nThere is no user info, Please register first.\n";
     return -1;
   }
 
   if (recovery_key == "None") {
-    printf("\nPlease enter your recovery key:");
-    scanf("%s",recovery_key);
+    cout << "\nPlease enter your recovery key:";
+    cin >> recovery_key;
   }
 
   if (recovery_key_read == recovery_key) {
-    printf("\nRecovey Key Approved\n");
+    cout << "\nRecovey Key Approved\n";
 
     if (new_password == "None") {
-      printf("\nPlease enter a new password:");
-      scanf("%s",new_password);
+      cout << "\nPlease enter a new password:";
+      cin >> new_password;
     }
 
     new_login_info = username_read + "/" + new_password + "/" + recovery_key_read;
     myFile.open(user_file, ios::out | ios::binary | ios::trunc); // Opens file with output tag
     myFile.write(new_login_info.c_str(), new_login_info.length()); // Deletes everything inside file and writes login_info variable
     myFile.close();
-    printf("\nPassword changed succesfully");
+    cout << "\nPassword changed succesfully";
     return 0;
   } else {
-    printf("\nWrong Recovery Key");
+    cout << "\nWrong Recovery Key";
     return -1;
   }
+}
+
+/**
+ * @brief generate secret keys for OTP algorithm.
+ *
+ * @return ss as string.
+ */
+string generateSecretKey() {
+  random_device rd;
+  mt19937 gen(rd());
+  uniform_int_distribution<> dis(0, 255);
+  stringstream ss;
+
+  for (int i = 0; i < 16; ++i) {
+    ss << setw(2) << setfill('0') << hex << dis(gen);
+  }
+
+  return ss.str();
+}
+
+/**
+ * @brief OTP algorithm.
+ * @param secretKey genereted secret key
+ * @param length wanted length of the otp
+ * @return otp.
+ */
+string generateOTP(const string &secretKey, int length) {
+  string allowedCharacters = "0123456789";
+  string otp;
+  random_device rd;
+  mt19937 gen(rd());
+  uniform_int_distribution<size_t> dis(0, allowedCharacters.length() - 1);
+
+  for (int i = 0; i < length; ++i) {
+    size_t index = static_cast<size_t>(dis(gen));
+    otp += allowedCharacters[index];
+  }
+
+  return otp;
 }
 
 /**
@@ -396,15 +445,15 @@ int user_change_password(string recovery_key, string new_password, string user_f
  */
 int main_menu() {
   while (true) {
-    printf("\n--------Main Menu--------");
-    printf("\n1-)Member Management");
-    printf("\n2-)Subscription Tracking");
-    printf("\n3-)Class Management");
-    printf("\n4-)Payemnt Processing");
-    printf("\n5-)Log out");
-    printf("\nPlease enter a choice:");
+    cout << "\n--------Main Menu--------";
+    cout << "\n1-)Member Management";
+    cout << "\n2-)Subscription Tracking";
+    cout << "\n3-)Class Management";
+    cout << "\n4-)Payemnt Processing";
+    cout << "\n5-)Log out";
+    cout << "\nPlease enter a choice:";
     int choice_main_menu;
-    scanf("%d", &choice_main_menu);
+    cin >> choice_main_menu;
 
     if (choice_main_menu == main_menu_choice.main_menu_member) {
       member_menu();
@@ -417,7 +466,7 @@ int main_menu() {
     } else if (choice_main_menu == main_menu_choice.main_menu_log_out) {
       break;
     } else {
-      printf("\nPlease input a correct choice.");
+      cout << "\nPlease input a correct choice.";
       continue;
     }
   }
@@ -432,18 +481,18 @@ int main_menu() {
  */
 int member_menu() {
   while (true) {
-    printf("\n--------Memberships Menu--------");
-    printf("\n1-)Show Memberships");
-    printf("\n2-)Add Membership");
-    printf("\n3-)Edit Memberships");
-    printf("\n4-)Delete Memberships");
-    printf("\n5-)Return to Main Menu");
-    printf("\nPlease enter a choice:");
+    cout << "\n--------Memberships Menu--------";
+    cout << "\n1-)Show Memberships";
+    cout << "\n2-)Add Membership";
+    cout << "\n3-)Edit Memberships";
+    cout << "\n4-)Delete Memberships";
+    cout << "\n5-)Return to Main Menu";
+    cout << "\nPlease enter a choice:";
     int choice_member;
-    scanf("%d", &choice_member);
+    cin >> choice_member;
 
     if (choice_member == sub_menu.sub_menu_show) {
-      printf("\n--------------Membership Records--------------\n");
+      cout << "\n--------------Membership Records--------------\n";
       file_read("membership_records.bin",'Y');
       continue;
     } else if (choice_member == sub_menu.sub_menu_add) {
@@ -458,7 +507,7 @@ int member_menu() {
     } else if (choice_member == sub_menu.sub_menu_return) {
       break;
     } else {
-      printf("\nPlease input a correct choice.");
+      cout << "\nPlease input a correct choice.";
       continue;
     }
   }
@@ -473,29 +522,33 @@ int member_menu() {
  */
 int add_member_record() {
   memberRecord member;
-  printf("\nPlease enter memberID:");
-  scanf("%d", &member.memberID);
-  printf("\nPlease enter full name:");
-  scanf("%s", &member.fullName);
-  printf("\nPlease enter birth date:");
-  scanf("%s", &member.birthDate);
-  printf("\nPlease enter phone number:");
-  scanf("%s", &member.phoneNumber);
-  printf("\nPlease enter first registration date:");
-  scanf("%s", &member.firstRegistrationDate);
-  char formattedRecord[1024];
+  cout << "\nPlease enter memberID:";
+  cin >> member.memberID;
+  cout << "\nPlease enter full name:";
+  cin >> member.fullName;
+  cout << "\nPlease enter birth date:";
+  cin >> member.birthDate;
+  cout << "\nPlease enter phone number:";
+  cin >> member.phoneNumber;
+  cout << "\nPlease enter first registration date:";
+  cin >> member.firstRegistrationDate;
   // Format the string first
-  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Full name:%s / Birth date:%s / Phone number:%s / First registration date:%s", member.memberID, member.fullName, member.birthDate,
-           member.firstRegistrationDate);
+  ostringstream formattedRecord;
+  formattedRecord << "MemberID:" << member.memberID
+                  << " / Full name:" << member.fullName
+                  << " / Birth date:" << member.birthDate
+                  << " / Phone number:" << member.phoneNumber
+                  << " / First registration date:" << member.firstRegistrationDate;
+  string result = formattedRecord.str();
   FILE *myFile;
   myFile = fopen("member_records.bin", "rb");
 
   if (myFile == NULL) {
-    file_write("member_records.bin", formattedRecord);
+    file_write("member_records.bin", result);
     return 0;
   } else {
     fclose(myFile);
-    file_append("member_records.bin", formattedRecord);
+    file_append("member_records.bin", result);
     return 0;
   }
 };
@@ -509,24 +562,28 @@ int add_member_record() {
 int edit_member_record() {
   memberRecord member;
   int RecordNumberToEdit;
-  printf("\nPlease enter record number to edit:");
-  scanf("%d", &RecordNumberToEdit);
-  printf("\nPlease enter memberID:");
-  scanf("%d", &member.memberID);
-  printf("\nPlease enter full name:");
-  scanf("%s", &member.fullName);
-  printf("\nPlease enter birth date:");
-  scanf("%s", &member.birthDate);
-  printf("\nPlease enter phone number:");
-  scanf("%s", &member.phoneNumber);
-  printf("\nPlease enter first registration date:");
-  scanf("%s", &member.firstRegistrationDate);
-  char formattedRecord[1024];
+  cout << "\nPlease enter record number to edit:";
+  cin >> RecordNumberToEdit;
+  cout << "\nPlease enter memberID:";
+  cin >> member.memberID;
+  cout << "\nPlease enter full name:";
+  cin >> member.fullName;
+  cout << "\nPlease enter birth date:";
+  cin >> member.birthDate;
+  cout << "\nPlease enter phone number:";
+  cin >> member.phoneNumber;
+  cout << "\nPlease enter first registration date:";
+  cin >> member.firstRegistrationDate;
   // Format the string first
-  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Full name:%s / Birth date:%s / Phone number:%s / First registration date:%s", member.memberID, member.fullName, member.birthDate,
-           member.firstRegistrationDate);
+  ostringstream formattedRecord;
+  formattedRecord << "MemberID:" << member.memberID
+                  << " / Full name:" << member.fullName
+                  << " / Birth date:" << member.birthDate
+                  << " / Phone number:" << member.phoneNumber
+                  << " / First registration date:" << member.firstRegistrationDate;
+  string result = formattedRecord.str();
 
-  if (file_edit("member_records.bin", RecordNumberToEdit, formattedRecord) == 0) {
+  if (file_edit("member_records.bin", RecordNumberToEdit, result) == 0) {
     return 0;
   } else {
     return -1;
@@ -539,9 +596,9 @@ int edit_member_record() {
  * @return 0.
  */
 int delete_member_record() {
-  printf("\nPlease enter record number to delete:");
+  cout << "\nPlease enter record number to delete:";
   int RecordNumberToDelete;
-  scanf("%d", &RecordNumberToDelete);
+  cin >> RecordNumberToDelete;
 
   if (file_line_delete("member_records.bin", RecordNumberToDelete) == 0) {
     return 0;
@@ -557,18 +614,18 @@ int delete_member_record() {
  */
 int subs_menu() {
   while (true) {
-    printf("\n--------Subscriptions Menu--------");
-    printf("\n1-)Show Subscriptions");
-    printf("\n2-)Add Subscription");
-    printf("\n3-)Edit Subscriptions");
-    printf("\n4-)Delete Subscriptions");
-    printf("\n5-)Return to Main Menu");
-    printf("\nPlease enter a choice:");
+    cout << "\n--------Subscriptions Menu--------";
+    cout << "\n1-)Show Subscriptions";
+    cout << "\n2-)Add Subscription";
+    cout << "\n3-)Edit Subscriptions";
+    cout << "\n4-)Delete Subscriptions";
+    cout << "\n5-)Return to Main Menu";
+    cout << "\nPlease enter a choice:";
     int choice_sub;
-    scanf("%d", &choice_sub);
+    cin >> choice_sub;
 
     if (choice_sub == sub_menu.sub_menu_show) {
-      printf("\n--------------Membership Records--------------\n");
+      cout << "\n--------------Membership Records--------------\n";
       file_read("subscription_records.bin",'Y');
       continue;
     } else if (choice_sub == sub_menu.sub_menu_add) {
@@ -583,7 +640,7 @@ int subs_menu() {
     } else if (choice_sub == sub_menu.sub_menu_return) {
       break;
     } else {
-      printf("\nPlease input a correct choice.");
+      cout << "\nPlease input a correct choice.";
       continue;
     }
   }
@@ -598,27 +655,30 @@ int subs_menu() {
  */
 int add_subs_record() {
   subsciprtionRecord sub;
-  printf("\nPlease enter memberID:");
-  scanf("%d", &sub.memberID);
-  printf("\nPlease enter starting date:");
-  scanf("%s", &sub.startingDate);
-  printf("\nPlease enter finishing date:");
-  scanf("%s", &sub.finishingDate);
-  printf("\nPlease enter subcription tier:");
-  scanf("%s", &sub.subscriptionTier);
-  char formattedRecord[1024];
+  cout << "\nPlease enter memberID:";
+  cin >> sub.memberID;
+  cout << "\nPlease enter starting date:";
+  cin >> sub.startingDate;
+  cout << "\nPlease enter finishing date:";
+  cin >> sub.finishingDate;
+  cout << "\nPlease enter subcription tier:";
+  cin >> sub.subscriptionTier;
   // Format the string first
-  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Starting date:%s / Finishing date:%s / Subcription tier:%s", sub.memberID, sub.startingDate, sub.finishingDate,
-           sub.subscriptionTier);
+  ostringstream formattedRecord;
+  formattedRecord << "MemberID:" << sub.memberID
+                  << " / Starting date:" << sub.startingDate
+                  << " / Finishing date:" << sub.finishingDate
+                  << " / Subcription tier:" << sub.subscriptionTier;
+  string result = formattedRecord.str();
   FILE *myFile;
   myFile = fopen("subciption_records.bin", "rb");
 
   if (myFile == NULL) {
-    file_write("subciption_records.bin", formattedRecord);
+    file_write("subciption_records.bin", result);
     return 0;
   } else {
     fclose(myFile);
-    file_append("subciption_records.bin", formattedRecord);
+    file_append("subciption_records.bin", result);
     return 0;
   }
 };
@@ -632,22 +692,25 @@ int add_subs_record() {
 int edit_subs_record() {
   subsciprtionRecord sub;
   int RecordNumberToEdit;
-  printf("\nPlease enter record number to edit:");
-  scanf("%d", &RecordNumberToEdit);
-  printf("\nPlease enter memberID:");
-  scanf("%d", &sub.memberID);
-  printf("\nPlease enter starting date:");
-  scanf("%s", &sub.startingDate);
-  printf("\nPlease enter finishing date:");
-  scanf("%s", &sub.finishingDate);
-  printf("\nPlease enter subcription tier:");
-  scanf("%s", &sub.subscriptionTier);
-  char formattedRecord[1024];
+  cout << "\nPlease enter record number to edit:";
+  cin >> RecordNumberToEdit;
+  cout << "\nPlease enter memberID:";
+  cin >> sub.memberID;
+  cout << "\nPlease enter starting date:";
+  cin >> sub.startingDate;
+  cout << "\nPlease enter finishing date:";
+  cin >> sub.finishingDate;
+  cout << "\nPlease enter subcription tier:";
+  cin >> sub.subscriptionTier;
   // Format the string first
-  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Starting date:%s / Finishing date:%s / Subcription tier:%s", sub.memberID, sub.startingDate, sub.finishingDate,
-           sub.subscriptionTier);
+  ostringstream formattedRecord;
+  formattedRecord << "MemberID:" << sub.memberID
+                  << " / Starting date:" << sub.startingDate
+                  << " / Finishing date:" << sub.finishingDate
+                  << " / Subcription tier:" << sub.subscriptionTier;
+  string result = formattedRecord.str();
 
-  if (file_edit("subciption_records.bin", RecordNumberToEdit, formattedRecord) == 0) {
+  if (file_edit("subciption_records.bin", RecordNumberToEdit, result) == 0) {
     return 0;
   } else {
     return -1;
@@ -660,9 +723,9 @@ int edit_subs_record() {
  * @return 0.
  */
 int delete_subs_record() {
-  printf("\nPlease enter record number to delete:");
+  cout << "\nPlease enter record number to delete:";
   int RecordNumberToDelete;
-  scanf("%d", &RecordNumberToDelete);
+  cin >> RecordNumberToDelete;
 
   if (file_line_delete("subciption_records.bin", RecordNumberToDelete) == 0) {
     return 0;
@@ -678,18 +741,18 @@ int delete_subs_record() {
  */
 int class_menu() {
   while (true) {
-    printf("\n--------Classes Menu--------");
-    printf("\n1-)Show Classes");
-    printf("\n2-)Add Class");
-    printf("\n3-)Edit Classes");
-    printf("\n4-)Delete Classes");
-    printf("\n5-)Return to Main Menu");
-    printf("\nPlease enter a choice:");
+    cout << "\n--------Classes Menu--------";
+    cout << "\n1-)Show Classes";
+    cout << "\n2-)Add Class";
+    cout << "\n3-)Edit Classes";
+    cout << "\n4-)Delete Classes";
+    cout << "\n5-)Return to Main Menu";
+    cout << "\nPlease enter a choice:";
     int choice_class;
-    scanf("%d", &choice_class);
+    cin >> choice_class;
 
     if (choice_class == sub_menu.sub_menu_show) {
-      printf("\n--------------Class Records--------------\n");
+      cout << "\n--------------Class Records--------------\n";
       file_read("class_records.bin",'Y');
       continue;
     } else if (choice_class == sub_menu.sub_menu_add) {
@@ -704,7 +767,7 @@ int class_menu() {
     } else if (choice_class == sub_menu.sub_menu_return) {
       break;
     } else {
-      printf("\nPlease input a correct choice.");
+      cout << "\nPlease input a correct choice.";
       continue;
     }
   }
@@ -746,18 +809,18 @@ int delete_class_record() {
  */
 int payment_menu() {
   while (true) {
-    printf("\n--------Payments Menu--------");
-    printf("\n1-)Show Payments");
-    printf("\n2-)Add Payment");
-    printf("\n3-)Edit Payments");
-    printf("\n4-)Delete Payments");
-    printf("\n7-)Return to Main Menu");
-    printf("\nPlease enter a choice:");
+    cout << "\n--------Payments Menu--------";
+    cout << "\n1-)Show Payments";
+    cout << "\n2-)Add Payment";
+    cout << "\n3-)Edit Payments";
+    cout << "\n4-)Delete Payments";
+    cout << "\n7-)Return to Main Menu";
+    cout << "\nPlease enter a choice:";
     int choice_payment;
-    scanf("%d", &choice_payment);
+    cin >> choice_payment;
 
     if (choice_payment == sub_menu.sub_menu_show) {
-      printf("\n--------------Payment Records--------------\n");
+      cout << "\n--------------Payment Records--------------\n";
       file_read("payment_records.bin",'Y');
       continue;
     } else if (choice_payment == sub_menu.sub_menu_add) {
@@ -772,7 +835,7 @@ int payment_menu() {
     } else if (choice_payment == sub_menu.sub_menu_return) {
       break;
     } else {
-      printf("\nPlease input a correct choice.");
+      cout << "\nPlease input a correct choice.";
       continue;
     }
   }
@@ -816,13 +879,30 @@ int login_menu() {
   string user_name;
   string password;
   string user_file = "user.bin";
-  printf("Please enter your username:");
-  scanf("%s", user_name);
-  printf("\nPlease enter your password:");
-  scanf("%s", password);
+  cout << "\nPlease enter your username:";
+  cin >> user_name;
+  cout << "\nPlease enter your password:";
+  cin >> password;
 
   if (user_login(user_name,password,user_file) == 0) {
-    main_menu();
+    string secretKey = generateSecretKey();
+    string otp = generateOTP(secretKey, 6);
+    string user_input_otp;
+    cout << "\n" << otp << " is the code, this is just the simulation of scenario.";
+    cout << "\nPlease enter single use code that we send you:";
+#ifdef UNIT_TESTING
+    cinBuffer << otp;
+#define CIN_REDIR(x) (cinBuffer >> x)
+#else
+#define CIN_REDIR(x) (cin >> x)
+#endif
+#ifndef UNIT_TESTING
+    CIN_REDIR(user_input_otp);
+#endif
+
+    if (user_input_otp == otp) {
+      main_menu();
+    }
   }
 
   return 0;
@@ -839,20 +919,20 @@ int register_menu() {
   string recovery_key;
   string user_file = "user.bin";
   char warning;
-  printf("Please enter your new username:");
-  scanf("%s", user_name);
-  printf("\nPlease enter your new password:");
-  scanf("%s", password);
-  printf("\nPlease enter your new recovery key:");
-  scanf("%s", recovery_key);
-  printf("\n------------WARNING------------");
-  printf("\nThis process will delete all previous records, do you still wish to proceed?[Y/n]:");
+  cout << "Please enter your new username:";
+  cin >> user_name;
+  cout << "\nPlease enter your new password:";
+  cin >> password;
+  cout << "\nPlease enter your new recovery key:";
+  cin >> recovery_key;
+  cout << "\n------------WARNING------------";
+  cout << "\nThis process will delete all previous records, do you still wish to proceed?[Y/n]:";
   scanf(" %c", &warning);
 
   if (warning == 'Y') {
     user_register(user_name,password,recovery_key,user_file);
   } else {
-    printf("Process terminated.");
+    cout << "Process terminated.";
   }
 
   return 0;
@@ -867,10 +947,10 @@ int change_password_menu() {
   string password;
   string recovery_key;
   string user_file = "user.bin";
-  printf("Please enter your recovery key:");
-  scanf("%s", recovery_key);
-  printf("\nPlease enter your new password:");
-  scanf("%s", password);
+  cout << "Please enter your recovery key:";
+  cin >> recovery_key;
+  cout << "\nPlease enter your new password:";
+  cin >> password;
   user_change_password(recovery_key,password,user_file);
   return 0;
 };
