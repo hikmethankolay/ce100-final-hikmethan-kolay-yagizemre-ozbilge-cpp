@@ -472,16 +472,65 @@ int member_menu() {
  * @return 0.
  */
 int add_member_record() {
-  return 0;
+  memberRecord member;
+  printf("\nPlease enter  memberID:");
+  scanf("%d", &member.memberID);
+  printf("\nPlease enter  full name:");
+  scanf("%s", &member.fullName);
+  printf("\nPlease enter  birth date:");
+  scanf("%s", &member.birthDate);
+  printf("\nPlease enter  phone number:");
+  scanf("%s", &member.phoneNumber);
+  printf("\nPlease enter  first registration date:");
+  scanf("%s", &member.firstRegistrationDate);
+  char formattedRecord[1024];
+  // Format the string first
+  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Full name:%s / Birth date:%s / Phone number:%s / First registration date:%s", member.memberID, member.fullName, member.birthDate,
+           member.firstRegistrationDate);
+  FILE *myFile;
+  myFile = fopen("member_records.bin", "rb");
+
+  if (myFile == NULL) {
+    file_write("member_records.bin", formattedRecord);
+    return 0;
+  } else {
+    fclose(myFile);
+    file_append("member_records.bin", formattedRecord);
+    return 0;
+  }
 };
 
 /**
  * @brief a fucntion for editing member record.
  *
- * @return 0.
+ * @return 0 on success.
+ * @return -1 on fail.
  */
 int edit_member_record() {
-  return 0;
+  memberRecord member;
+  int RecordNumberToEdit;
+  printf("\nPlease enter record number to edit:");
+  scanf("%d", &RecordNumberToEdit);
+  printf("\nPlease enter  memberID:");
+  scanf("%d", &member.memberID);
+  printf("\nPlease enter  full name:");
+  scanf("%s", &member.fullName);
+  printf("\nPlease enter  birth date:");
+  scanf("%s", &member.birthDate);
+  printf("\nPlease enter  phone number:");
+  scanf("%s", &member.phoneNumber);
+  printf("\nPlease enter  first registration date:");
+  scanf("%s", &member.firstRegistrationDate);
+  char formattedRecord[1024];
+  // Format the string first
+  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Full name:%s / Birth date:%s / Phone number:%s / First registration date:%s", member.memberID, member.fullName, member.birthDate,
+           member.firstRegistrationDate);
+
+  if (file_edit("member_records.bin", RecordNumberToEdit, formattedRecord) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
@@ -490,7 +539,15 @@ int edit_member_record() {
  * @return 0.
  */
 int delete_member_record() {
-  return 0;
+  printf("\nPlease enter record number to delete:");
+  int RecordNumberToDelete;
+  scanf("%d", &RecordNumberToDelete);
+
+  if (file_line_delete("member_records.bin", RecordNumberToDelete) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
