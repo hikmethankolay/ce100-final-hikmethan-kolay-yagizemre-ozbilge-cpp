@@ -120,13 +120,13 @@ struct sub_menu_variables {
 int file_write(string file_name, string text);
 
 /**
- * @brief Opens a binary file, Reads all of its content, seperate line with "\n" and write them to console, also returns a string for unit tests.
- *
+ * @brief Opens a binary file, reads all of its content, separates lines with "\n", and writes them to console. Also returns the contents of the file as a string for unit tests.
  *
  * @param file_name The name of the file to read from.
- * @return The contents of the file as a string.
+ * @param print_to_console It is a variable to disabling wrting content to console.
+ * @return The contents of the file as a statically allocated string.
  */
-string file_read(string file_name);
+char *file_read(const char *file_name, char print_to_console);
 
 /**
  * @brief Appends given text to a binary file with a automatic calculated line number. Calcultes new lines line number by finding last lines line number.
@@ -162,10 +162,13 @@ int file_line_delete(string file_name, int line_number_to_delete);
 /**
  * @brief This function is for user register
  *
- * Function creates a user.bin file and writes inputted username and password in it.
- *
+ * Function creates a user file in binary format and writes inputted username and password in it. Additionaly deletes all previous records.
+ * @param new_username new username.
+ * @param new_password new password.
+ * @param new_recovery_key new recovery key
+ * @param user_file file that contains user info.
  * @return 0 on success.
- * @return -1 on faill.
+ * @return -1 on fail.
  */
 int user_register(string new_username = "None", string new_password = "None", string new_recovery_key = "None", string user_file = "user.bin", string choice = "None");
 
@@ -173,16 +176,19 @@ int user_register(string new_username = "None", string new_password = "None", st
  * @brief This function is for user login
  *
  * Function read user.bin file and checks if username and password matchs with inputted username and password
- *
+ * @param username username.
+ * @param password password.
+ * @param user_file file that contains user info.
  * @return 0 on success.
  * @return -1 on fail.
  */
 int user_login(string username = "None", string password = "None", string user_file = "user.bin");
 
 /**
- * @brief This function changes password of user.
- *
- *
+ * @brief This function changes the password of a user.
+ * @param recovery_key recovery_key.
+ * @param new_password new password.
+ * @param user_file file that contains user info.
  * @return 0 on success.
  * @return -1 on fail.
  */
