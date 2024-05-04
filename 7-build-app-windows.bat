@@ -156,6 +156,17 @@ tar -czvf release_win\windows-doxygen-test-documentation.tar.gz -C docs\doxygent
 echo Package Publish Test Results Report
 tar -czvf release_win\windows-test-results-report.tar.gz -C docs\testresultswin .
 
+del test1.bin
+del test2.bin
+del test3.bin
+del test4.bin
+del test5.bin
+del usertest.bin
+del user.bin
+del *_records.bin
+del *_test.bin
+del *_output.bin
+
 echo ....................
 echo Operation Completed!
 echo ....................

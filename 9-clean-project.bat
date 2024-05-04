@@ -55,5 +55,16 @@ rd /S /Q "docs\doxygentestlinux"
 rd /S /Q "docs\testresultswin"
 rd /S /Q "docs\testresultslinux"
 
+del test1.bin
+del test2.bin
+del test3.bin
+del test4.bin
+del test5.bin
+del usertest.bin
+del user.bin
+del *_records.bin
+del *_test.bin
+del *_output.bin
+
 echo Delete the "site" folder and its contents
 rd /S /Q "site"

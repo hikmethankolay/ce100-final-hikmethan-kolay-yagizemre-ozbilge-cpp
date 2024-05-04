@@ -93,11 +93,11 @@ endif()
 
 
 if(ENABLE_FITNESS_LIB)
-	add_subdirectory(${ROOT}/fitness_managemnet_lib)
+	add_subdirectory(${ROOT}/fitness_management_lib)
 endif()
 
 if(ENABLE_FITNESS_APP)
-	add_subdirectory(${ROOT}/fitness_managemnet_app)
+	add_subdirectory(${ROOT}/fitness_management_app)
 endif()
 
 if(ENABLE_FITNESS_TEST)
