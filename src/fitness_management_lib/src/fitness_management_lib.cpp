@@ -597,16 +597,61 @@ int subs_menu() {
  * @return 0.
  */
 int add_subs_record() {
-  return 0;
+  subsciprtionRecord sub;
+  printf("\nPlease enter memberID:");
+  scanf("%d", &sub.memberID);
+  printf("\nPlease enter starting date:");
+  scanf("%s", &sub.startingDate);
+  printf("\nPlease enter finishing date:");
+  scanf("%s", &sub.finishingDate);
+  printf("\nPlease enter subcription tier:");
+  scanf("%s", &sub.subscriptionTier);
+  char formattedRecord[1024];
+  // Format the string first
+  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Starting date:%s / Finishing date:%s / Subcription tier:%s", sub.memberID, sub.startingDate, sub.finishingDate,
+           sub.subscriptionTier);
+  FILE *myFile;
+  myFile = fopen("subciption_records.bin", "rb");
+
+  if (myFile == NULL) {
+    file_write("subciption_records.bin", formattedRecord);
+    return 0;
+  } else {
+    fclose(myFile);
+    file_append("subciption_records.bin", formattedRecord);
+    return 0;
+  }
 };
 
 /**
  * @brief a fucntion for editing subscription record.
  *
- * @return 0.
+ * @return 0 on success.
+ * @return -1 on fail.
  */
 int edit_subs_record() {
-  return 0;
+  subsciprtionRecord sub;
+  int RecordNumberToEdit;
+  printf("\nPlease enter record number to edit:");
+  scanf("%d", &RecordNumberToEdit);
+  printf("\nPlease enter memberID:");
+  scanf("%d", &sub.memberID);
+  printf("\nPlease enter starting date:");
+  scanf("%s", &sub.startingDate);
+  printf("\nPlease enter finishing date:");
+  scanf("%s", &sub.finishingDate);
+  printf("\nPlease enter subcription tier:");
+  scanf("%s", &sub.subscriptionTier);
+  char formattedRecord[1024];
+  // Format the string first
+  snprintf(formattedRecord, sizeof(formattedRecord), "MemberID:%d / Starting date:%s / Finishing date:%s / Subcription tier:%s", sub.memberID, sub.startingDate, sub.finishingDate,
+           sub.subscriptionTier);
+
+  if (file_edit("subciption_records.bin", RecordNumberToEdit, formattedRecord) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
@@ -615,7 +660,15 @@ int edit_subs_record() {
  * @return 0.
  */
 int delete_subs_record() {
-  return 0;
+  printf("\nPlease enter record number to delete:");
+  int RecordNumberToDelete;
+  scanf("%d", &RecordNumberToDelete);
+
+  if (file_line_delete("subciption_records.bin", RecordNumberToDelete) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
