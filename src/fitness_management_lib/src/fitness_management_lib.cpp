@@ -888,12 +888,12 @@ int login_menu() {
     string secretKey = generateSecretKey();
     string otp = generateOTP(secretKey, 6);
     string user_input_otp;
-    cout << "\n" << otp << " is the code, this is just the simulation of scenario.";
-    cout << "\nPlease enter single use code that we send you:";
+    cout << "\nPlease enter single use code that we send you";
 #ifdef UNIT_TESTING
     cinBuffer << otp;
 #define CIN_REDIR(x) (cinBuffer >> x)
 #else
+    cout << "\n" << otp << " is the code, this is just the simulation of scenario:";
 #define CIN_REDIR(x) (cin >> x)
 #endif
 #ifndef UNIT_TESTING
