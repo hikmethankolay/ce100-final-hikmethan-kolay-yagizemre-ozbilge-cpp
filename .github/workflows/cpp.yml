@@ -200,6 +200,7 @@ jobs:
           if not exist "docs\doxygen" mkdir docs\doxygen
           if exist "site" rd /S /Q "site"
           if not exist "site" mkdir site
+          xcopy /E /I ".\original_test_files" ".\"
 
       # -------------------------------------------------------
       - name: Clean Generated Folder and Files on Ubuntu/MacOS
@@ -234,6 +235,7 @@ jobs:
               rm -rf site
             fi
             mkdir -p site
+            cp -r "./original_test_files/"* "./"
 
       - name: Install dependencies on Windows
         if: startsWith(matrix.config.os, 'windows') && matrix.config.active == true
@@ -251,7 +253,6 @@ jobs:
             python -m coverxygen --version
             ninja --version
             cmake --version
-
       # sudo apt-get install -y ggcov
       # sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90
       - name: Install dependencies on Ubuntu
@@ -339,7 +340,6 @@ jobs:
             ninja --version
             cmake --version
             gcc --version
-      
       # ----------------------------------------------------------------------------------
 
       - name: Configure and Build Release C++11
@@ -364,7 +364,7 @@ jobs:
         shell: bash
         run: |
             status=$?
-            cmd="build/build/Release/calculator_test"
+            cmd="build/build/Release/fitness_management_test"
             $cmd
             status=$?
             [ $status -eq 0 ] && exit 0 || exit 1  
@@ -374,7 +374,7 @@ jobs:
         shell: bash
         run: |
             status=$?
-            cmd="build/build/Release/calculator_test"
+            cmd="build/build/Release/fitness_management_test"
             $cmd
             status=$?
             [ $status -eq 0 ] && exit 0 || exit 1
@@ -384,7 +384,7 @@ jobs:
         shell: bash
         run: |
             status=$?
-            cmd="./build/build/Release/calculator_test"
+            cmd="./build/build/Release/fitness_management_test"
             $cmd
             status=$?
             [ $status -eq 0 ] && exit 0 || exit 1
@@ -413,7 +413,7 @@ jobs:
         shell: bash
         run: |
             status=$?
-            cmd="build/build/Debug/calculator_test"
+            cmd="build/build/Debug/fitness_management_test"
             $cmd
             status=$?
             [ $status -eq 0 ] && exit 0 || exit 1  
@@ -423,7 +423,7 @@ jobs:
         shell: bash
         run: |
             status=$?
-            cmd="build/build/Debug/calculator_test"
+            cmd="build/build/Debug/fitness_management_test"
             $cmd
             status=$?
             [ $status -eq 0 ] && exit 0 || exit 1
@@ -433,7 +433,7 @@ jobs:
         shell: bash
         run: |
             status=$?
-            cmd="./build/build/Debug/calculator_test"
+            cmd="./build/build/Debug/fitness_management_test"
             $cmd
             status=$?
             [ $status -eq 0 ] && exit 0 || exit 1
@@ -481,7 +481,7 @@ jobs:
         if: startsWith(matrix.config.os, 'windows') && matrix.config.active == true && matrix.config.testcoverage == true
         shell: cmd
         run: |
-            OpenCppCoverage.exe --export_type=cobertura:cobertura.xml --sources calculator\application\src --sources calculator\application\header --sources calculator\library\src --sources calculator\library\header  --sources calculator\tests\src -- build\build\Debug\calculator_test.exe
+            OpenCppCoverage.exe --export_type=cobertura:cobertura.xml --sources src\fitness_management_app\src --sources src\fitness_management_app\header --sources src\fitness_management_lib\src --sources src\fitness_management_lib\src\header  --sources src\tests\fitness_management_test -- build\build\Debug\fitness_management_test.exe
   
       - name: Generate Test Coverage on Ubuntu and MacOS
         if: (startsWith(matrix.config.os, 'ubuntu') || startsWith(matrix.config.os, 'macos')) && matrix.config.active == true  && matrix.config.testcoverage == true
@@ -500,15 +500,14 @@ jobs:
         if: startsWith(matrix.config.os, 'windows') && matrix.config.active == true  && matrix.config.testcoverage == true
         shell: cmd
         run: |
-            call reportgenerator "-title:Test Coverage Report" "-reports:**/cobertura.xml" "-sourcedirs:calculator/application/src;calculator/application/header;calculator/library/src;calculator/library/header;calculator/tests/src" "-targetdir:docs/coveragereport" -reporttypes:Html -filefilters:-*minkernel\*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h
-            call reportgenerator "-reports:**/cobertura.xml" "-sourcedirs:calculator/application/src;calculator/application/header;calculator/library/src;calculator/library/header;calculator/tests/src" "-targetdir:assets/codecoverage" -reporttypes:Badges -filefilters:-*minkernel\*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h
-  
+            call reportgenerator "-title:Test Coverage Report" "-reports:**/cobertura.xml" "-sourcedirs:src\fitness_management_app\src;src\fitness_management_app\header;src\fitness_management_lib\src;src\fitness_management_lib\src\header;src\tests\fitness_management_test" "-targetdir:docs/coveragereport" -reporttypes:Html -filefilters:-*minkernel\*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h
+            call reportgenerator "-reports:**/cobertura.xml" "-sourcedirs:src\fitness_management_app\src;src\fitness_management_app\header;src\fitness_management_lib\src;src\fitness_management_lib\src\header;src\tests\fitness_management_test" "-targetdir:assets/codecoverage" -reporttypes:Badges -filefilters:-*minkernel\*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h
       - name: Generate Test Report on Ubuntu and MacOS
         if: (startsWith(matrix.config.os, 'ubuntu') || startsWith(matrix.config.os, 'macos')) && matrix.config.active == true  && matrix.config.testcoverage == true
         shell: bash
         run: |
-            reportgenerator "-title:Test Coverage Report" "-reports:**/coverage.info" "-sourcedirs:calculator/application/src;calculator/application/header;calculator/library/src;calculator/library/header;calculator/tests/src" "-targetdir:docs/coveragereport" "-reporttypes:Html" "-filefilters:-*Xcode*;-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h"
-            reportgenerator "-reports:**/coverage.info" "-sourcedirs:calculator/application/src;calculator/application/header;calculator/library/src;calculator/library/header;calculator/tests/src" "-targetdir:assets/codecoverage" "-reporttypes:Badges" "-filefilters:-*Xcode*;-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h"
+            reportgenerator "-title:Test Coverage Report" "-reports:**/coverage.info" "-sourcedirs:src\fitness_management_app\src;src\fitness_management_app\header;src\fitness_management_lib\src;src\fitness_management_lib\src\header;src\tests\fitness_management_test" "-targetdir:docs/coveragereport" "-reporttypes:Html" "-filefilters:-*Xcode*;-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h"
+            reportgenerator "-reports:**/coverage.info" "-sourcedirs:src\fitness_management_app\src;src\fitness_management_app\header;src\fitness_management_lib\src;src\fitness_management_lib\src\header;src\tests\fitness_management_test" "-targetdir:assets/codecoverage" "-reporttypes:Badges" "-filefilters:-*Xcode*;-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h"
   
       # -------------------------------------------------------
 
@@ -518,7 +517,7 @@ jobs:
         run: |
             call robocopy assets "docs\assets" /E
             call copy README.md "docs\index.md"
-            call robocopy calculator\library\header "build\build\Release" /E
+            call robocopy src/fitness_management_lib/header "build\build\Release" /E
             exit /B 0
     
       - name: Copy Webpage Files on Ubuntu/MacOS
@@ -526,8 +525,18 @@ jobs:
         run: |
             cp -R assets docs/
             cp README.md docs/index.md
-            cp -R calculator/library/header build/build/Release/
-          
+            cp -R src/fitness_management_lib/header build/build/Release/
+
+      - name: Copy original test files to publish/bin Windows
+        if: startsWith(matrix.config.os, 'windows') && matrix.config.active == true
+        run: xcopy /E /I "original_test_files" ".\publish\bin"
+        shell: cmd
+
+      - name: Copy original test files to publish/bin Ubuntu/MacOS
+        if: (startsWith(matrix.config.os, 'ubuntu') || startsWith(matrix.config.os, 'macos')) && matrix.config.active == true
+        run: cp -r "original_test_files/"* "./publish/bin"
+        shell: bash
+        
         # -------------------------------------------------------
         
       - name: Generate Webpage
@@ -598,6 +607,28 @@ jobs:
         with:
              name: ${{ matrix.config.artifact }}_doc.tar.gz
              path: release/${{ matrix.config.artifact }}_doc.tar.gz
+
+      - name: delete test files Ubuntu/MacOs
+        if: (startsWith(matrix.config.os, 'ubuntu') || startsWith(matrix.config.os, 'macos')) && matrix.config.active == true 
+        run: rm test1.bin test2.bin test3.bin test4.bin test5.bin usertest.bin user.bin *_records.bin *_test.bin *_output.bin
+        shell: bash
+        working-directory: "./"
+
+      - name: delete test files Windows
+        if: startsWith(matrix.config.os, 'windows') && matrix.config.active == true
+        run: |
+          del "%GITHUB_WORKSPACE%\test1.bin"
+          del "%GITHUB_WORKSPACE%\test2.bin"
+          del "%GITHUB_WORKSPACE%\test3.bin"
+          del "%GITHUB_WORKSPACE%\test4.bin"
+          del "%GITHUB_WORKSPACE%\test5.bin"
+          del "%GITHUB_WORKSPACE%\usertest.bin"
+          del "%GITHUB_WORKSPACE%\user.bin"
+          del "%GITHUB_WORKSPACE%\*_records.bin"
+          del "%GITHUB_WORKSPACE%\*_test.bin"
+          del "%GITHUB_WORKSPACE%\*_output.bin"
+        shell: cmd
+        working-directory: "./"
 
   # If Test Ok Then Generate Release
   create_release:
