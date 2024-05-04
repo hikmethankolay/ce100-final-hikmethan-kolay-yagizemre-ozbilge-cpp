@@ -473,15 +473,15 @@ int member_menu() {
  */
 int add_member_record() {
   memberRecord member;
-  printf("\nPlease enter  memberID:");
+  printf("\nPlease enter memberID:");
   scanf("%d", &member.memberID);
-  printf("\nPlease enter  full name:");
+  printf("\nPlease enter full name:");
   scanf("%s", &member.fullName);
-  printf("\nPlease enter  birth date:");
+  printf("\nPlease enter birth date:");
   scanf("%s", &member.birthDate);
-  printf("\nPlease enter  phone number:");
+  printf("\nPlease enter phone number:");
   scanf("%s", &member.phoneNumber);
-  printf("\nPlease enter  first registration date:");
+  printf("\nPlease enter first registration date:");
   scanf("%s", &member.firstRegistrationDate);
   char formattedRecord[1024];
   // Format the string first
@@ -511,15 +511,15 @@ int edit_member_record() {
   int RecordNumberToEdit;
   printf("\nPlease enter record number to edit:");
   scanf("%d", &RecordNumberToEdit);
-  printf("\nPlease enter  memberID:");
+  printf("\nPlease enter memberID:");
   scanf("%d", &member.memberID);
-  printf("\nPlease enter  full name:");
+  printf("\nPlease enter full name:");
   scanf("%s", &member.fullName);
-  printf("\nPlease enter  birth date:");
+  printf("\nPlease enter birth date:");
   scanf("%s", &member.birthDate);
-  printf("\nPlease enter  phone number:");
+  printf("\nPlease enter phone number:");
   scanf("%s", &member.phoneNumber);
-  printf("\nPlease enter  first registration date:");
+  printf("\nPlease enter first registration date:");
   scanf("%s", &member.firstRegistrationDate);
   char formattedRecord[1024];
   // Format the string first
