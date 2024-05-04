@@ -35,7 +35,7 @@ install(TARGETS ${LIBNAME}
         RUNTIME DESTINATION bin )
 		
 # Copy required header to the installation include folder		
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/header/calculator.h
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/header/fitness_management_lib.h
         DESTINATION include)
 
 # Export the crypto target so other modules can use it
