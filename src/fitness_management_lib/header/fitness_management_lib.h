@@ -39,7 +39,11 @@ struct login_menu_variables {
   /**
   * @brief a varible for menu navigation.
   */
-  int login_menu_exit = 4;
+  int login_menu_guest = 4;
+  /**
+  * @brief a varible for menu navigation.
+  */
+  int login_menu_exit = 5;
 
 };
 /**
@@ -55,19 +59,19 @@ struct manin_menu_variables {
   /**
   * @brief a varible for menu navigation.
   */
-  int main_menu_property = 1;
+  int main_menu_member = 1;
   /**
   * @brief a varible for menu navigation.
   */
-  int main_menu_tenant = 2;
+  int main_menu_subs = 2;
   /**
   * @brief a varible for menu navigation.
   */
-  int main_menu_rent_tracking = 3;
+  int main_menu_class = 3;
   /**
   * @brief a varible for menu navigation.
   */
-  int main_menu_maintenance = 4;
+  int main_menu_payment = 4;
   /**
   * @brief a varible for menu navigation.
   */
@@ -98,15 +102,7 @@ struct sub_menu_variables {
   /**
   * @brief a varible for menu navigation.
   */
-  int sub_menu_search = 5;
-  /**
-  * @brief a varible for menu navigation.
-  */
-  int sub_menu_sort = 6;
-  /**
-  * @brief a varible for menu navigation.
-  */
-  int sub_menu_return = 7;
+  int sub_menu_return = 5;
 };
 
 /**

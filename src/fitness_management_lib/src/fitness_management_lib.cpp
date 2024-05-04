@@ -70,7 +70,7 @@ char *file_read(const char *file_name, char print_to_console) {
   content[length] = '\0'; // Null-terminate the string
 
   if (print_to_console == 'Y') {
-    std::cout << content; // Print the content to the console
+    printf("%s",content); // Print the content to the console
   }
 
   myFile.close(); // Ensure the file is closed
@@ -106,7 +106,7 @@ int file_append(string file_name, string text) {
 
     myFile.close();
   } else {
-    cout << "File operation failed\n";
+    printf("\nFile operation failed");
     return -1;
   }
 
@@ -154,7 +154,7 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
     if (line_number_to_edit > 0 && line_number_to_edit <= line_count) {
       lines[line_number_to_edit] = to_string(line_number_to_edit) + "-)" + new_line + "\n"; // Changes a member of Lines array to a new line with its line number
     } else {
-      cout << "You can only edit existing lines\n";
+      printf("\nYou can only edit existing lines");
       return -1;
     }
 
@@ -169,10 +169,10 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
     }
 
     myFile.close();
-    cout << "\nData successfully edited\n\n";
+    printf("\nData successfully edited");
     return 0;
   } else {
-    cout << "File operation failed" << endl;
+    printf("\nFile operation failed");
     return -1;
   }
 }
@@ -214,7 +214,7 @@ int file_line_delete(string file_name, int line_number_to_delete) {
 
       lines[line_count - 1] = ""; // Clears the last element of lines so the same thing wouldn't write to the file twice
     } else {
-      cout << "You can only erase existing lines" << endl;
+      printf("\nYou can only erase existing lines");
       myFile.close();
       return -1;
     }
@@ -238,11 +238,11 @@ int file_line_delete(string file_name, int line_number_to_delete) {
       }
     }
 
-    cout << "\nData successfully deleted\n\n";
+    printf("\nData successfully deleted");
     myFile.close();
     return 0;
   } else {
-    cout << "File operation failed\n";
+    printf("\nFile operation failed");
     return -1;
   }
 }
@@ -286,7 +286,7 @@ int user_login(string username, string password, string user_file) {
   myFile.open(user_file, ios::in | ios::binary); // Opens file with input tag
 
   if (!myFile.is_open()) {
-    cout << "There is no user info, Please register first.\n";
+    printf("\nThere is no user info, Please register first.\n");
     return -1;
   }
 
@@ -308,17 +308,17 @@ int user_login(string username, string password, string user_file) {
   myFile.close();
 
   if (username == "None" && password == "None") {
-    cout << "Please enter username:";
-    cin >> username;
-    cout << "Please enter password:";
-    cin >> password;
+    printf("\nPlease enter username:");
+    scanf("%s",username);
+    printf("\nPlease enter password:");
+    scanf("%s",password);
   }
 
   if (username == username_read && password == password_read) {
-    cout << "Login Succesfull";
+    printf("\nLogin Succesfull");
     return 0;
   } else {
-    cout << "Wrong username or password";
+    printf("\nWrong username or password");
     return -1;
   }
 }
@@ -360,31 +360,31 @@ int user_change_password(string recovery_key, string new_password, string user_f
 
     myFile.close();
   } else {
-    cout << "There is no user info, Please register first.\n";
+    printf("\nThere is no user info, Please register first.\n");
     return -1;
   }
 
   if (recovery_key == "None") {
-    cout << "Please enter your recovery key:";
-    cin >> recovery_key;
+    printf("\nPlease enter your recovery key:");
+    scanf("%s",recovery_key);
   }
 
   if (recovery_key_read == recovery_key) {
-    cout << "Recovey Key Approved\n";
+    printf("\nRecovey Key Approved\n");
 
     if (new_password == "None") {
-      cout << "Please enter a new password:";
-      cin >> new_password;
+      printf("\nPlease enter a new password:");
+      scanf("%s",new_password);
     }
 
     new_login_info = username_read + "/" + new_password + "/" + recovery_key_read;
     myFile.open(user_file, ios::out | ios::binary | ios::trunc); // Opens file with output tag
     myFile.write(new_login_info.c_str(), new_login_info.length()); // Deletes everything inside file and writes login_info variable
     myFile.close();
-    cout << "Password changed succesfully";
+    printf("\nPassword changed succesfully");
     return 0;
   } else {
-    cout << "Wrong Recovery Key";
+    printf("\nWrong Recovery Key");
     return -1;
   }
 }
@@ -397,27 +397,27 @@ int user_change_password(string recovery_key, string new_password, string user_f
 int main_menu() {
   while (true) {
     printf("\n--------Main Menu--------");
-    printf("\n1-)Properties");
-    printf("\n2-)Tenants");
-    printf("\n3-)Rent Tracking");
-    printf("\n4-)Maintenance Tracking");
+    printf("\n1-)Member Management");
+    printf("\n2-)Subscription Tracking");
+    printf("\n3-)Class Management");
+    printf("\n4-)Payemnt Processing");
     printf("\n5-)Log out");
     printf("\nPlease enter a choice:");
     int choice_main_menu;
     scanf("%d", &choice_main_menu);
 
-    if (choice_main_menu == main_menu_choice.main_menu_property) {
-      //x_menu();
-    } else if (choice_main_menu == main_menu_choice.main_menu_tenant) {
-      //x_menu();
-    } else if (choice_main_menu == main_menu_choice.main_menu_rent_tracking) {
-      //x_menu();
-    } else if (choice_main_menu == main_menu_choice.main_menu_maintenance) {
-      //x_menu();
+    if (choice_main_menu == main_menu_choice.main_menu_member) {
+      member_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_subs) {
+      subs_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_class) {
+      class_menu();
+    } else if (choice_main_menu == main_menu_choice.main_menu_payment) {
+      payment_menu();
     } else if (choice_main_menu == main_menu_choice.main_menu_log_out) {
       break;
     } else {
-      printf("Please input a correct choice.");
+      printf("\nPlease input a correct choice.");
       continue;
     }
   }
@@ -425,6 +425,169 @@ int main_menu() {
   return 0;
 }
 
+/**
+ * @brief main menu.
+ *
+ * @return 0.
+ */
+int member_menu() {
+  while (true) {
+    printf("\n--------Memberships Menu--------");
+    printf("\n1-)Show Memberships");
+    printf("\n2-)Add Membership");
+    printf("\n3-)Edit Memberships");
+    printf("\n4-)Delete Memberships");
+    printf("\n5-)Return to Main Menu");
+    printf("\nPlease enter a choice:");
+    int choice_member;
+    scanf("%d", &choice_member);
+
+    if (choice_member == sub_menu.sub_menu_show) {
+      printf("\n--------------Membership Records--------------\n");
+      file_read("membership_records.bin",'Y');
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_add) {
+      //add_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_edit) {
+      //edit_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_delete) {
+      //delete_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_return) {
+      break;
+    } else {
+      printf("\nPlease input a correct choice.");
+      continue;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * @brief subs menu.
+ *
+ * @return 0.
+ */
+int subs_menu() {
+  while (true) {
+    printf("\n--------Subscriptions Menu--------");
+    printf("\n1-)Show Subscriptions");
+    printf("\n2-)Add Subscription");
+    printf("\n3-)Edit Subscriptions");
+    printf("\n4-)Delete Subscriptions");
+    printf("\n5-)Return to Main Menu");
+    printf("\nPlease enter a choice:");
+    int choice_sub;
+    scanf("%d", &choice_sub);
+
+    if (choice_sub == sub_menu.sub_menu_show) {
+      printf("\n--------------Membership Records--------------\n");
+      file_read("subscription_records.bin",'Y');
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_add) {
+      //add_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_edit) {
+      //edit_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_delete) {
+      //delete_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_return) {
+      break;
+    } else {
+      printf("\nPlease input a correct choice.");
+      continue;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * @brief class menu.
+ *
+ * @return 0.
+ */
+int class_menu() {
+  while (true) {
+    printf("\n--------Classes Menu--------");
+    printf("\n1-)Show Classes");
+    printf("\n2-)Add Class");
+    printf("\n3-)Edit Classes");
+    printf("\n4-)Delete Classes");
+    printf("\n5-)Return to Main Menu");
+    printf("\nPlease enter a choice:");
+    int choice_class;
+    scanf("%d", &choice_class);
+
+    if (choice_class == sub_menu.sub_menu_show) {
+      printf("\n--------------Class Records--------------\n");
+      file_read("class_records.bin",'Y');
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_add) {
+      //add_class_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_edit) {
+      //edit_class_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_delete) {
+      //delete_class_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_return) {
+      break;
+    } else {
+      printf("\nPlease input a correct choice.");
+      continue;
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * @brief payment menu.
+ *
+ * @return 0.
+ */
+int payment_menu() {
+  while (true) {
+    printf("\n--------Payments Menu--------");
+    printf("\n1-)Show Payments");
+    printf("\n2-)Add Payment");
+    printf("\n3-)Edit Payments");
+    printf("\n4-)Delete Payments");
+    printf("\n7-)Return to Main Menu");
+    printf("\nPlease enter a choice:");
+    int choice_payment;
+    scanf("%d", &choice_payment);
+
+    if (choice_payment == sub_menu.sub_menu_show) {
+      printf("\n--------------Payment Records--------------\n");
+      file_read("payment_records.bin",'Y');
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_add) {
+      //add_payment_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_edit) {
+      //edit_payment_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_delete) {
+      //delete_payment_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_return) {
+      break;
+    } else {
+      printf("\nPlease input a correct choice.");
+      continue;
+    }
+  }
+
+  return 0;
+}
 
 /**
  * @brief login menu.

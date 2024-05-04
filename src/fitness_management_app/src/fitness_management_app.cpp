@@ -28,7 +28,8 @@ int main() {
     printf("1-)Login\n");
     printf("2-)Register\n");
     printf("3-)Change Password\n");
-    printf("4-)Exit\n");
+    printf("4-)Login as a Guest\n");
+    printf("5-)Exit\n");
     printf("Please enter a choice:");
     int choice_login_menu;
     scanf("%d", &choice_login_menu);
@@ -41,6 +42,9 @@ int main() {
       continue;
     } else if (choice_login_menu == login_menu_choice.login_menu_password_reset) {
       change_password_menu();
+      continue;
+    } else if (choice_login_menu == login_menu_choice.login_menu_guest) {
+      //TODO - Guest mode
       continue;
     } else if (choice_login_menu == login_menu_choice.login_menu_exit) {
       login_menu_choice.run = false;
