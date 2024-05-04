@@ -170,7 +170,7 @@ int file_line_delete(string file_name, int line_number_to_delete);
  * @return 0 on success.
  * @return -1 on fail.
  */
-int user_register(string new_username = "None", string new_password = "None", string new_recovery_key = "None", string user_file = "user.bin", string choice = "None");
+int user_register(string new_username = "None", string new_password = "None", string new_recovery_key = "None", string user_file = "user.bin");
 
 /**
  * @brief This function is for user login
@@ -193,115 +193,5 @@ int user_login(string username = "None", string password = "None", string user_f
  * @return -1 on fail.
  */
 int user_change_password(string recovery_key = "None", string new_password = "None", string user_file = "user.bin");
-
-/**
- * @brief This function register records to service_history_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int register_service_history_record(string file_name = "service_history_records.bin", string vehicle_model = "None", int service_km = 1, string service_provider = "None", int service_cost = 1);
-
-/**
- * @brief This function edit the records in service_history_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int edit_service_history_record(string file_name = "service_history_records.bin", int line_number_to_edit = 0, string vehicle_model = "None", int service_km = 1, string service_provider = "None",
-                                int service_cost = 1);
-
-/**
- * @brief This function delete the records in service_history_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int delete_service_history_record(string file_name = "service_history_records.bin", int line_number_to_delete = 0);
-
-/**
- * @brief This function register records to expense_logging_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int register_expense_record(string file_name = "expense_logging_records.bin", string car_model = "None", string expense_date = "None", string expense_type = "None", int expense = 1);
-
-/**
-* @brief This function edit the records in expense_logging_records.bin.
-*
-*
-* @return 0 on success.
-* @return -1 on fail.
-*/
-int edit_expense_record(string file_name = "expense_logging_records.bin", int line_number_to_edit = 0, string car_model = "None", string expense_date = "None", string expense_type = "None",
-                        int expense = 1);
-
-/**
-* @brief This function delete the records in expense_logging_records.bin.
-*
-*
-* @return 0 on success.
-* @return -1 on fail.
-*/
-int delete_expense_record(string file_name = "expense_logging_records.bin", int line_number_to_delete = 0);
-
-/**
- * @brief This function register records to maintenance_reminder_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int register_maintenance_reminder_record(string file_name ="maintenance_reminder_records.bin", string vehicle_model = "None", int service_km = 1, string service_type = "None");
-
-/**
- * @brief This function edit the records in maintenance_reminder_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int edit_maintenance_reminder_record(string file_name = "maintenance_reminder_records.bin", int line_number_to_edit = 0, string vehicle_model = "None", int service_km = 1,
-                                     string service_type = "None");
-
-/**
- * @brief This function delete the records in maintenance_reminder_records.bin.
- *
- *
- * @return 0 on success.
- * @return -1 on fail.
- */
-int delete_maintenance_reminder_record(string file_name = "maintenance_reminder_records.bin", int line_number_to_delete = 0);
-/**
-* @brief This function register records to fuel_efficiency_records.bin.
-*
-*
-* @return 0 on success.
-* @return -1 on fail.
-*/
-int register_fuel_efficiency_record(string file_name = "fuel_efficiency_records.bin", string car_model = "None", float fuel_consumed = 1.0f, float road_traveled = 1.0f);
-
-/**
-* @brief This function edit the records in fuel_efficiency_records.bin.
-*
-*
-* @return 0 on success.
-* @return -1 on fail.
-*/
-int edit_fuel_efficiency_record(string file_name = "fuel_efficiency_records.bin", int line_number_to_edit = 0, string car_model = "None", float fuel_consumed = 1.0f, float road_traveled = 1.0f);
-
-/**
-* @brief This function delete the records in fuel_efficiency_records.bin.
-*
-*
-* @return 0 on success.
-* @return -1 on fail.
-*/
-int delete_fuel_efficiency_record(string file_name = "fuel_efficiency_records.bin", int line_number_to_delete = 0);
 
 #endif // FITNESS_MANAGEMENT_LIB_H

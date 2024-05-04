@@ -258,37 +258,13 @@ int file_line_delete(string file_name, int line_number_to_delete) {
  * @return 0 on success.
  * @return -1 on fail.
  */
-int user_register(string new_username, string new_password, string new_recovery_key, string user_file, string choice) {
+int user_register(string new_username, string new_password, string new_recovery_key, string user_file) {
   string login_info;
-
-  if (choice == "None") {
-    cout << "Do you understand that if you create a new account all the records that have been saved so far will be deleted?[Y/N]:";
-    cin >> choice;
-  }
-
-  if (choice == "Y") {
-    if (new_username == "None" && new_password == "None" && new_recovery_key == "None") {
-      cout << "Please enter a new username:";
-      cin >> new_username;
-      cout << "Please enter a new password:";
-      cin >> new_password;
-      cout << "\nWARNING!!!\nYou will use this to change password if neeeded, if you lost this you cant access logs without them being completely deleted\nWARNING!!!\n";
-      cout << "Please enter a new recovery key:";
-      cin >> new_recovery_key;
-    }
-
-    login_info = new_username + "/" + new_password + "/" + new_recovery_key;
-    myFile.open(user_file, ios::out | ios::binary | ios::trunc); // Opens file with output tag
-    myFile.write(login_info.c_str(), login_info.length()); // Deletes everything inside file and writes login_info variable
-    myFile.close();
-    remove("service_history_records.bin");
-    remove("maintenance_reminder_records.bin");
-    remove("expense_records.bin");
-    remove("fuel_efficiency_records.bin");
-    return 0;
-  } else {
-    return -1;
-  }
+  login_info = new_username + "/" + new_password + "/" + new_recovery_key;
+  myFile.open(user_file, ios::out | ios::binary | ios::trunc); // Opens file with output tag
+  myFile.write(login_info.c_str(), login_info.length()); // Deletes everything inside file and writes login_info variable
+  myFile.close();
+  return 0;
 }
 
 /**

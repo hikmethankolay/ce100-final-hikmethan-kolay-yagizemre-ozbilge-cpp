@@ -13,3 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure
+
+int main() {
+  return 0;
+}

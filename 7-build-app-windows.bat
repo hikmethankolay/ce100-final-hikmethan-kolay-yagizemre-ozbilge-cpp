@@ -74,7 +74,7 @@ rem call cmake --install build_win --strip
 start "Install Debug" cmake --install build_win --config Debug --strip
 start "Install Release" cmake --install build_win --config Release --strip
 
-xcopy /E /I /Y "%currentDir%\original_test_files" "%currentDir%\build_win\src\tests\rental_management_test"
+xcopy /E /I /Y "%currentDir%\original_test_files" "%currentDir%\build_win\src\tests\fitness_management_test"
 
 echo Test CMAKE
 cd build_win
@@ -85,15 +85,15 @@ call junit2html testResults_windows.xml testResults_windows.html
 call copy testResults_windows.html "..\docs\testresultswin\index.html"
 cd ..
 
-echo Generate Test Coverage Data for fitness_management_lib
-call OpenCppCoverage.exe --export_type=binary:fitness_management_lib_tests_unit_win.cov --sources src\fitness_management_lib\src --sources src\fitness_management_lib\header --sources src\tests\fitness_management_lib -- build_win\build\Debug\fitness_management_lib_tests.exe
+echo Generate Test Coverage Data for Rental Management Lib
+call OpenCppCoverage.exe --export_type=binary:fitness_management_tests_unit_win.cov --sources src\fitness_management_lib\src --sources src\fitness_management_lib\header --sources src\tests\fitness_management_test -- build_win\build\Debug\fitness_management_tests.exe
 
-echo Generate Test Coverage Data for fitness_management_lib App and Combine Results
-call OpenCppCoverage.exe --input_coverage=fitness_management_lib_tests_unit_win.cov --export_type=cobertura:fitness_management_app_unit_win_cobertura.xml --sources src\fitness_management_lib\src --sources src\fitness_management_lib\header --sources src\fitness_management_app\src --sources src\fitness_management_app\header --sources src\tests\fitness_management_lib -- build_win\build\Debug\fitness_management_app.exe
+echo Generate Test Coverage Data for Rental Management App and Combine Results
+call OpenCppCoverage.exe --input_coverage=fitness_management_tests_unit_win.cov --export_type=cobertura:fitness_management_app_unit_win_cobertura.xml --sources src\fitness_management_lib\src --sources src\fitness_management_lib\header --sources src\fitness_management_app\src --sources src\fitness_management_app\header --sources src\tests\fitness_management_test -- build_win\build\Debug\fitness_management_app.exe
 
 echo Generate Unit Test Coverage Report
-call reportgenerator "-title:fitness_management_lib Library Unit Test Coverage Report (Windows)" "-targetdir:docs/coveragereportlibwin" "-reporttypes:Html" "-reports:**/fitness_management_app_unit_win_cobertura.xml" "-sourcedirs:src/fitness_management_lib/src;src/fitness_management_lib/header;src/fitness_management_app/src;src/fitness_management_app/header;src/tests/fitness_management_lib" "-filefilters:-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h;-*build*" "-historydir:report_test_hist_win"
-call reportgenerator "-targetdir:assets/codecoveragelibwin" "-reporttypes:Badges" "-reports:**/fitness_management_app_unit_win_cobertura.xml" "-sourcedirs:src/fitness_management_lib/src;src/fitness_management_lib/header;src/fitness_management_app/src;src/fitness_management_app/header;src/tests/fitness_management_lib" "-filefilters:-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h;-*build*"
+call reportgenerator "-title:Rental Management Library Unit Test Coverage Report (Windows)" "-targetdir:docs/coveragereportlibwin" "-reporttypes:Html" "-reports:**/fitness_management_app_unit_win_cobertura.xml" "-sourcedirs:src/fitness_management_lib/src;src/fitness_management_lib/header;src/fitness_management_app/src;src/fitness_management_app/header;src/tests/fitness_management_test" "-filefilters:-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h;-*build*" "-historydir:report_test_hist_win"
+call reportgenerator "-targetdir:assets/codecoveragelibwin" "-reporttypes:Badges" "-reports:**/fitness_management_app_unit_win_cobertura.xml" "-sourcedirs:src/fitness_management_lib/src;src/fitness_management_lib/header;src/fitness_management_app/src;src/fitness_management_app/header;src/tests/fitness_management_test" "-filefilters:-*minkernel\*;-*gtest*;-*a\_work\*;-*gtest-*;-*gtest.cc;-*gtest.h;-*build*"
 
 echo Copy the "assets" folder and its contents to "docs" recursively
 call robocopy assets "docs\assets" /E
