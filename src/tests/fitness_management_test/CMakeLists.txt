@@ -29,7 +29,7 @@ target_include_directories(${EXENAME} PUBLIC
 						   ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add any dependencies or compile options specific to aka5g tests
-target_link_libraries(${EXENAME} PRIVATE calculator utility gtest gtest_main)
+target_link_libraries(${EXENAME} PRIVATE fitness_managemnet_lib gtest gtest_main)
 
 # Register the test with CTest
 # add_test(NAME ${EXENAME} COMMAND ${EXENAME})
