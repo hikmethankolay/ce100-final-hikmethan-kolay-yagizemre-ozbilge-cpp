@@ -833,7 +833,34 @@ int add_class_record() {
  * @return 0.
  */
 int edit_class_record() {
-  return 0;
+    classRecord class;
+    int RecordNumberToEdit;
+    cout << "\nPlease enter a record number to edit:";
+    cin >> RecordNumberToEdit;
+    cout << "\nPlease enter tutor";
+    cin >> class.tutor;
+    cout << "\nPlease enter date";
+    cin >> class.date;
+    cout << "\nPlease enter starting hour";
+    cin >> class.startingHour;
+    cout << "\nPlease enter finishing hour";
+    cin >> class.finishingHour;
+    cout << "\nPlease enter student list";
+    cin >> class.studentList[100];
+    // Format the string first
+    ostringstream formattedRecord;
+    formattedRecord << "/ tutor:" << class.tutor;
+                    << "/ date:" << class.date;
+                    << "/ Starting Hour:" << class.startingHour;
+                    << "/ Finishing Hour:" << class.finishingHour;
+                    << "Student List" << class.studentList[100];
+    string result = formattedRecord.str();
+
+    if (file_edit("class_records.bin", RecordNumberToEdit, result) == 0) {
+      return 0;
+    } else {
+      return -1;
+    }
 };
 
 /**
