@@ -993,12 +993,20 @@ int edit_payment_record() {
 };
 
 /**
- * @brief a fucntion for deleting payment record.
+ * @brief a function for deleting payment record.
  *
  * @return 0.
  */
 int delete_payment_record() {
-  return 0;
+    cout << "\nPlease enter record number to delete:";
+    int RecordNumberToDelete;
+    cin >> RecordNumberToDelete;
+
+    if (file_line_delete("payment_records.bin", RecordNumberToDelete) == 0) {
+     return 0;
+    } else {
+      return -1;
+    }
 };
 
 /**
