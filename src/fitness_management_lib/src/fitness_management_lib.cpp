@@ -796,7 +796,35 @@ int class_menu(bool isGuestMode) {
  * @return 0.
  */
 int add_class_record() {
-  return 0;
+    classRecord class;
+    cout << "\nPlease enter tutor";
+    cin >> class.tutor;
+    cout << "\nPlease enter date";
+    cin >> class.date;
+    cout << "\nPlease enter starting hour";
+    cin >> class.startingHour;
+    cout << "\nPlease enter finishing hour";
+    cin >> class.finishingHour;
+    cout << "\nPlease enter student list";
+    cin >> class.studentList[100];
+    // Format the string first
+    ostringstream formattedRecord;
+    formattedRecord << "/ tutor:" << class.tutor;
+                    << "/ date:" << class.date;
+                    << "/ Starting Hour:" << class.startingHour;
+                    << "/ Finishing Hour:" << class.finishingHour;
+                    << "Student List" << class.studentList[100];
+   string result = formattedRecord.str();
+   FILE* myFile;
+   myFile = fopen("class_records.bin", "rb");
+   if (myFile == NULL) {
+       file_write("class_records.bin", result);
+       return 0;
+   } else {
+       fclose(myFile);
+       file_append("class_records.bin", result);
+       return 0;
+   }
 };
 
 /**
