@@ -869,7 +869,15 @@ int edit_class_record() {
  * @return 0.
  */
 int delete_class_record() {
-  return 0;
+    cout << "\nPlease enter record number to delete:";
+    int RecordNumberToDelete;
+    cin >> RecordNumberToDelete;
+
+    if (file_line_delete("class_records.bin", RecordNumberToDelete) == 0) {
+        return 0;
+    } else {
+      return -1;
+    }
 };
 
 /**
