@@ -61,6 +61,8 @@ del test3.bin
 del test4.bin
 del test5.bin
 del usertest.bin
+del usertest2.bin
+del usertest3.bin
 del user.bin
 del *_records.bin
 del *_test.bin
