@@ -168,6 +168,7 @@ del user.bin
 del *_records.bin
 del *_test.bin
 del *_output.bin
+del *_huffman.bin
 
 echo ....................
 echo Operation Completed!

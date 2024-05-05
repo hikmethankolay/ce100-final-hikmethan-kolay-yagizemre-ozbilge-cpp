@@ -447,7 +447,6 @@ int file_line_delete(string file_name, int line_number_to_delete) {
  * @return -1 on fail.
  */
 int user_register(string new_username, string new_password, string new_recovery_key, string user_file) {
-  string login_info;
   string login_info = new_username + "/" + new_password + "/" + new_recovery_key;
   unordered_map<char, int> freqMap = calculateFrequency(login_info);
   Node *root = buildHuffmanTree(freqMap);
