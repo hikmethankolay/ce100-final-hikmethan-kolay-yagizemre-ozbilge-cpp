@@ -662,24 +662,22 @@ int member_menu(bool isGuestMode) {
 
     if (choice_member == sub_menu.sub_menu_show) {
       cout << "\n--------------Membership Records--------------\n";
-      file_read("membership_records",'Y');
+      file_read("member_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_member == sub_menu.sub_menu_add) {
-        add_member_record();
-        continue;
-      } else if (choice_member == sub_menu.sub_menu_edit) {
-        edit_member_record();
-        continue;
-      } else if (choice_member == sub_menu.sub_menu_delete) {
-        delete_member_record();
-        continue;
-      }
-    } else if (choice_member == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_member == sub_menu.sub_menu_add || choice_member == sub_menu.sub_menu_edit || choice_member == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_member == sub_menu.sub_menu_add) {
+      add_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_edit) {
+      edit_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_delete) {
+      delete_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -802,22 +800,20 @@ int subs_menu(bool isGuestMode) {
       cout << "\n--------------Membership Records--------------\n";
       file_read("subscription_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_sub == sub_menu.sub_menu_add) {
-        add_subs_record();
-        continue;
-      } else if (choice_sub == sub_menu.sub_menu_edit) {
-        edit_subs_record();
-        continue;
-      } else if (choice_sub == sub_menu.sub_menu_delete) {
-        delete_subs_record();
-        continue;
-      }
-    } else if (choice_sub == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_sub == sub_menu.sub_menu_add || choice_sub == sub_menu.sub_menu_edit || choice_sub == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_sub == sub_menu.sub_menu_add) {
+      add_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_edit) {
+      edit_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_delete) {
+      delete_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -934,22 +930,20 @@ int class_menu(bool isGuestMode) {
       cout << "\n--------------Class Records--------------\n";
       file_read("class_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_class == sub_menu.sub_menu_add) {
-        add_class_record();
-        continue;
-      } else if (choice_class == sub_menu.sub_menu_edit) {
-        edit_class_record();
-        continue;
-      } else if (choice_class == sub_menu.sub_menu_delete) {
-        delete_class_record();
-        continue;
-      }
-    } else if (choice_class == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_class == sub_menu.sub_menu_add || choice_class == sub_menu.sub_menu_edit || choice_class == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_class == sub_menu.sub_menu_add) {
+      add_subs_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_edit) {
+      edit_subs_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_delete) {
+      delete_subs_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -1007,22 +1001,20 @@ int payment_menu(bool isGuestMode) {
       cout << "\n--------------Payment Records--------------\n";
       file_read("payment_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_payment == sub_menu.sub_menu_add) {
-        add_payment_record();
-        continue;
-      } else if (choice_payment == sub_menu.sub_menu_edit) {
-        edit_payment_record();
-        continue;
-      } else if (choice_payment == sub_menu.sub_menu_delete) {
-        delete_payment_record();
-        continue;
-      }
-    } else if (choice_payment == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_payment == sub_menu.sub_menu_add || choice_payment == sub_menu.sub_menu_edit || choice_payment == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_payment == sub_menu.sub_menu_add) {
+      add_subs_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_edit) {
+      edit_subs_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_delete) {
+      delete_subs_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
