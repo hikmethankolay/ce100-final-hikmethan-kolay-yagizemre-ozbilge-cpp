@@ -240,10 +240,10 @@ string generateOTP(const string &secretKey, int length);
 
 /**
  * @brief main menu.
- *
+ * @param isGuestMode a bool to check if user entered with guest mode.
  * @return 0.
  */
-int main_menu();
+int main_menu(bool isGuestMode);
 
 /**
  * @brief login menu.
@@ -268,32 +268,32 @@ int change_password_menu();
 
 /**
  * @brief member_menu.
- *
+ * @param isGuestMode a bool to check if user entered with guest mode.
  * @return 0.
  */
-int member_menu();
+int member_menu(bool isGuestMode);
 
 /**
  * @brief subs menu.
- *
+ * @param isGuestMode a bool to check if user entered with guest mode.
  * @return 0.
  */
-int subs_menu();
+int subs_menu(bool isGuestMode);
 
 
 /**
  * @brief class menu.
- *
+ * @param isGuestMode a bool to check if user entered with guest mode.
  * @return 0.
  */
-int class_menu();
+int class_menu(bool isGuestMode);
 
 /**
  * @brief payment menu.
- *
+ * @param isGuestMode a bool to check if user entered with guest mode.
  * @return 0.
  */
-int payment_menu();
+int payment_menu(bool isGuestMode);
 
 /**
  * @brief a fucntion for adding member record.

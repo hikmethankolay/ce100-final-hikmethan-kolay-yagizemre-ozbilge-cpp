@@ -44,7 +44,7 @@ int main() {
       change_password_menu();
       continue;
     } else if (choice_login_menu == login_menu_choice.login_menu_guest) {
-      //TODO - Guest mode
+      main_menu(true);
       continue;
     } else if (choice_login_menu == login_menu_choice.login_menu_exit) {
       login_menu_choice.run = false;
