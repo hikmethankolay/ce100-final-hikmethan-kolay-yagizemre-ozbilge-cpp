@@ -163,9 +163,13 @@ void writeTreeToFile(ofstream &outFile, Node *node) {
     return;
   }
 
-  outFile << "D" << node->data << node->freq; // D for data, followed by data and frequency
-  writeTreeToFile(outFile, node->left);
-  writeTreeToFile(outFile, node->right);
+  if (node->left == nullptr && node->right == nullptr) {
+    outFile << "L" << node->data << "|" << node->freq; // L for leaf, followed by data and frequency
+  } else {
+    outFile << "I" << node->data << "|" << node->freq; // I for internal, followed by data and frequency
+    writeTreeToFile(outFile, node->left);
+    writeTreeToFile(outFile, node->right);
+  }
 }
 
 /**
@@ -176,20 +180,30 @@ void writeTreeToFile(ofstream &outFile, Node *node) {
  */
 Node *readTreeFromFile(ifstream &inFile) {
   char marker;
-  inFile >> marker;
+  inFile.get(marker);
 
   if (marker == 'N') {
     return nullptr; // Null node marker
-  } else if (marker == 'D') {
+  } else if (marker == 'L') {
     char data;
     int freq;
-    inFile >> data >> freq;
-    Node *newNode = new Node(data, freq);
-    newNode->left = readTreeFromFile(inFile);
-    newNode->right = readTreeFromFile(inFile);
-    return newNode;
+    inFile >> data; // Read data
+    inFile.ignore(1, '|'); // Ignore the delimiter
+    inFile >> freq; // Read frequency
+    Node *leafNode = new Node(data, freq);
+    return leafNode;
+  } else if (marker == 'I') {
+    char data;
+    int freq;
+    inFile >> data; // Read data
+    inFile.ignore(1, '|'); // Ignore the delimiter
+    inFile >> freq; // Read frequency
+    Node *internalNode = new Node(data, freq);
+    internalNode->left = readTreeFromFile(inFile);
+    internalNode->right = readTreeFromFile(inFile);
+    return internalNode;
   } else {
-    cout << "Invalid marker in file!" << endl;
+    cerr << "Invalid marker in file!" << endl;
     return nullptr;
   }
 }
@@ -209,12 +223,16 @@ int file_write(string file_name, string text) {
   unordered_map<char, string> codes;
   buildCodes(root, "", codes);
   string encodedText = encode(text, codes);
-  myFile.open(file_name+".bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
-  myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
-  myFile.close();
-  ofstream outFile(file_name+"_huffman.bin", ios::binary);
-  writeTreeToFile(outFile, root);
-  outFile.close();
+  // Open the binary file for writing
+  ofstream outFile(file_name + ".bin", ios::binary);
+  // Write the encoded text to the binary file
+  outFile.write(encodedText.c_str(), encodedText.length());
+  outFile.close(); // Close the file
+  // Open the Huffman file for writing
+  ofstream outFileHuffman(file_name + "_huffman.bin", ios::binary);
+  // Write the Huffman tree to the Huffman file
+  writeTreeToFile(outFileHuffman, root);
+  outFileHuffman.close(); // Close the Huffman file
   return 0;
 }
 
@@ -226,25 +244,26 @@ int file_write(string file_name, string text) {
  * @return The contents of the file as a statically allocated string.
  */
 string file_read(string file_name, const char print_to_console) {
-  string content;
-  ifstream myFile(file_name+".bin", ios::binary);
+  ifstream myFile(file_name + ".bin", ios::binary);
 
   if (!myFile.is_open()) {
-    cout << "File operation failed, There is no record" << std::endl;
+    cout << "File operation failed, There is no record" << endl;
     return "-1";
   }
 
-  int ch;
-
-  while ((ch = myFile.get()) != EOF) { // Ensure there's room for null terminator
-    if (ch == '\r') continue; // Skip '\r'
-
-    content+=ch;
-  }
-
-  myFile.close(); // Ensure the file is closed
-  ifstream inFile(file_name+"_huffman.bin", ios::binary);
+  // Get the size of the file
+  myFile.seekg(0, ios::end);
+  int fileSize = myFile.tellg();
+  myFile.seekg(0, ios::beg);
+  // Read the entire file into a string
+  string content(fileSize, '\0');
+  myFile.read(&content[0], fileSize);
+  myFile.close(); // Close the file
+  // Decode the content and return it
+  ifstream inFile;
+  inFile.open(file_name + "_huffman.bin", ios::binary);
   Node *root = readTreeFromFile(inFile);
+  inFile.close();
   string decodedText = decode(content, root);
 
   if (print_to_console == 'Y') {
