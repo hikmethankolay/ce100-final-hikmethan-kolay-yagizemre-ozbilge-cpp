@@ -8,6 +8,10 @@
 #define FITNESS_MANAGEMENT_LIB_H
 
 #include <string>
+#include <queue>
+#include <unordered_map>
+#include <vector>
+
 /**
  * @brief Using the standard C++ namespace to simplify code with standard library elements.
  *
@@ -45,6 +49,43 @@ struct paymentRecord {
   string paymentDate;
   string nextPaymentDate;
 
+};
+
+/**
+ *
+ * @brief Huffman tree struct.
+ *
+*/
+struct Node {
+  char data; // Character
+  int freq; // Frequency
+  Node *left, *right;
+
+  /**
+   * @brief Constructs a new Node object.
+   *
+   * @param data Character stored in the node.
+   * @param freq Frequency of the character.
+   */
+  Node(char data, int freq) : data(data), freq(freq), left(nullptr), right(nullptr) {}
+};
+
+/**
+ *
+ * @brief Comparison function for the priority queue.
+ *
+*/
+struct Compare {
+  /**
+   * @brief Operator () overload for comparing two Node pointers based on their frequencies.
+   *
+   * @param a Pointer to the first Node.
+   * @param b Pointer to the second Node.
+   * @return true if frequency of 'a' is less than frequency of 'b', else false.
+   */
+  bool operator()(Node *a, Node *b) {
+    return a->freq < b->freq;
+  }
 };
 
 /**
@@ -155,7 +196,16 @@ int file_write(string file_name, string text);
  * @param print_to_console It is a variable to disabling wrting content to console.
  * @return The contents of the file as a statically allocated string.
  */
-char *file_read(const char *file_name, char print_to_console);
+string file_read(const string file_name, char print_to_console);
+
+/**
+ * @brief Opens a binary file, reads all of its content, separates lines with "\n", and writes them to console. Also returns the contents of the file as a string for unit tests.
+ *
+ * @param file_name The name of the file to read from.
+ * @param print_to_console It is a variable to disabling wrting content to console.
+ * @return The contents of the file as a statically allocated string.
+ */
+string file_read_for_test(const string file_name, char print_to_console);
 
 /**
  * @brief Appends given text to a binary file with a automatic calculated line number. Calcultes new lines line number by finding last lines line number.
@@ -380,5 +430,55 @@ int edit_payment_record();
  * @return 0.
  */
 int delete_payment_record();
+
+/**
+ * @brief Calculates frequency of characters in the input text.
+ *
+ * @param text Input text.
+ * @return unordered_map<char, int> Frequency map of characters.
+ */
+unordered_map<char, int> calculateFrequency(const string &text);
+
+/**
+ * @brief Builds the Huffman tree based on character frequencies.
+ *
+ * @param freqMap Frequency map of characters.
+ * @return Node* Root of the Huffman tree.
+ */
+Node *buildHuffmanTree(const unordered_map<char, int> &freqMap);
+
+/**
+ * @brief Traverses the Huffman tree and builds the codewords.
+ *
+ * @param root Root of the Huffman tree.
+ * @param code Current code.
+ * @param codes Map to store character codes.
+ */
+void buildCodes(Node *root, string code, unordered_map<char, string> &codes);
+
+/**
+ * @brief Decodes the encoded text using Huffman codes.
+ *
+ * @param encodedText Encoded text.
+ * @param root Root of the Huffman tree.
+ * @return string Decoded text.
+ */
+string decode(const string &encodedText, Node *root);
+
+/**
+ * @brief Writes the Huffman tree to a file.
+ *
+ * @param outFile Output file stream.
+ * @param node Current node being written.
+ */
+void writeTreeToFile(ofstream &outFile, Node *node);
+
+/**
+ * @brief Reads the Huffman tree from a file.
+ *
+ * @param inFile Input file stream.
+ * @return Node* Root of the Huffman tree.
+ */
+Node *readTreeFromFile(ifstream &inFile);
 
 #endif // FITNESS_MANAGEMENT_LIB_H
