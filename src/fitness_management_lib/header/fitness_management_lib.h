@@ -202,10 +202,10 @@ string file_read(const string file_name, char print_to_console);
  * @brief Opens a binary file, reads all of its content, separates lines with "\n", and writes them to console. Also returns the contents of the file as a string for unit tests.
  *
  * @param file_name The name of the file to read from.
- * @param print_to_console It is a variable to disabling wrting content to console.
+ *
  * @return The contents of the file as a statically allocated string.
  */
-string file_read_for_test(const string file_name, char print_to_console);
+string file_read_for_test(const string file_name);
 
 /**
  * @brief Appends given text to a binary file with a automatic calculated line number. Calcultes new lines line number by finding last lines line number.
