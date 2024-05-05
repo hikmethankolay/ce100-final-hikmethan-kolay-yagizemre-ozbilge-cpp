@@ -3,7 +3,7 @@
 
 #include "gtest/gtest.h"
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure
-
+#include <unordered_set>
 
 class FitnessTest : public ::testing::Test {
  protected:
@@ -175,6 +175,33 @@ TEST_F(FitnessTest, TestUserLoginFail_2) {
  */
 TEST_F(FitnessTest, TestUserLoginFail_3) {
   EXPECT_EQ(fail, user_login("username", "password", "usertestttt.bin"));
+}
+
+/**
+ * @brief Test case to verify OTP length
+ */
+TEST_F(FitnessTest, TestOTPLength) {
+  std::string secretKey = generateSecretKey();
+  int length = 6;
+  std::string otp = generateOTP(secretKey, length);
+  EXPECT_EQ(otp.length(), length);
+}
+
+/**
+ * @brief Test case to verify OTP uniqueness
+ */
+TEST_F(FitnessTest, TestOTPUniqueness) {
+  std::string secretKey = generateSecretKey();
+  int length = 6;
+  std::unordered_set<std::string> otpSet;
+  const int numIterations = 100;
+
+  for (int i = 0; i < numIterations; ++i) {
+    std::string otp = generateOTP(secretKey, length);
+    otpSet.insert(otp);
+  }
+
+  EXPECT_EQ(otpSet.size(), numIterations);
 }
 
 /**
