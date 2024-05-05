@@ -962,12 +962,34 @@ int add_payment_record() {
 };
 
 /**
- * @brief a fucntion for editing payment record.
+ * @brief a function for editing payment record.
  *
  * @return 0.
  */
 int edit_payment_record() {
-  return 0;
+    paymentRecord payment;
+    int RecordNumberToEdit;
+    cout << "\nPlease enter memberID";
+    cin >> payment.memberID;
+    cout << "\nPlease enter paid amount";
+    cin >> payment.paidAmount;
+    cout << "\nPlease enter payment date";
+    cin >> payment.paymentDate;
+    cout << "\nPlease enter next payment date";
+    cin >> payment.nextPaymentDate;
+    // Format the string first
+    ostringstream formattedRecord;
+    formattedRecord << "/ memberID" << payment.memberID;
+    << "/ paid amount" << payment.paidAmount;
+    << "/ payment date:" << payment.paymentDate;
+    << "/ next payment date:" << payment.nextPaymentDate;
+    string result = formattedRecord.str();
+
+    if (file_edit("payment_records.bin", RecordNumberToEdit, result) == 0) {
+        return 0;
+    } else {
+     return -1;
+    }
 };
 
 /**
