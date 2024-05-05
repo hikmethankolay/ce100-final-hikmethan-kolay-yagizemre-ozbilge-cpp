@@ -932,7 +932,33 @@ int payment_menu(bool isGuestMode) {
  * @return 0.
  */
 int add_payment_record() {
-  return 0;
+    paymentRecord payment;
+    cout << "\nPlease enter memberID";
+    cin >> payment.memberID;
+    cout << "\nPlease enter paid amount";
+    cin >> payment.paidAmount;
+    cout << "\nPlease enter payment date";
+    cin >> payment.paymentDate;
+    cout << "\nPlease enter next payment date";
+    cin >> payment.nextPaymentDate;
+    // Format the string first
+    ostringstream formattedRecord;
+    formattedRecord << "/ memberID" << payment.memberID;
+    << "/ paid amount" << payment.paidAmount;
+    << "/ payment date:" << payment.paymentDate;
+    << "/ next payment date:" << payment.nextPaymentDate;
+    string result = formattedRecord.str();
+    FILE* myFile;
+    myFile = fopen("payment_records.bin", "rb");
+    if (myFile == NULL) {
+        file_write("payment_records.bin", result);
+        return 0;
+    }
+    else {
+        fclose(myFile);
+        file_append("payment_records.bin", result);
+        return 0;
+    }
 };
 
 /**
