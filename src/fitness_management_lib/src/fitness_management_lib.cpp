@@ -921,7 +921,7 @@ int login_menu() {
 #endif
 
     if (user_input_otp == otp) {
-      main_menu();
+      main_menu(false);
     }
   }
 
