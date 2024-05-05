@@ -30,7 +30,7 @@ int success = 0;
  */
 TEST_F(FitnessTest, TestFileRead) {
   string testString = "1-)TEXT STRING1\n2-)TEXT STRING2\n3-)TEXT STRING3\n4-)TEXT STRING4\n5-)TEXT STRING5\n";
-  EXPECT_EQ(testString, file_read("test1.bin", 'N'));
+  EXPECT_EQ(testString, file_read("test1", 'N'));
 }
 
 /**
@@ -40,7 +40,7 @@ TEST_F(FitnessTest, TestFileAppend) {
   string testString = "1-)TEXT STRING1\n2-)TEXT STRING2\n3-)TEXT STRING3\n4-)TEXT STRING4\n5-)TEXT STRING5\n6-)TEXT STRING6\n";
   string appendString = "TEXT STRING6";
   file_append("test2.bin", appendString);
-  EXPECT_EQ(testString, file_read("test2.bin", 'N'));
+  EXPECT_EQ(testString, file_read("test2", 'N'));
 }
 
 /**
@@ -50,7 +50,7 @@ TEST_F(FitnessTest, TestFileEdit) {
   string testString = "1-)TEXT STRING1\n2-)TEXT STRING2\n3-)TEXT STRING EDIT\n4-)TEXT STRING4\n5-)TEXT STRING5\n";
   string editString = "TEXT STRING EDIT";
   file_edit("test3.bin", 3, editString);
-  EXPECT_EQ(testString, file_read("test3.bin", 'N'));
+  EXPECT_EQ(testString, file_read("test3", 'N'));
 }
 
 /**
@@ -59,7 +59,7 @@ TEST_F(FitnessTest, TestFileEdit) {
 TEST_F(FitnessTest, TestFileDelete) {
   string testString = "1-)TEXT STRING2\n2-)TEXT STRING3\n3-)TEXT STRING4\n4-)TEXT STRING5\n";
   file_line_delete("test4.bin", 1);
-  EXPECT_EQ(testString, file_read("test4.bin", 'N'));
+  EXPECT_EQ(testString, file_read("test4", 'N'));
 }
 
 /**
@@ -69,14 +69,14 @@ TEST_F(FitnessTest, TestFileWrite) {
   string testString = "0-)TEXT STRING WRITE\n";
   string writeString = "TEXT STRING WRITE";
   file_write("test5.bin", writeString);
-  EXPECT_EQ(testString, file_read("test5.bin", 'N'));
+  EXPECT_EQ(testString, file_read("test5", 'N'));
 }
 
 /**
  * @brief Tests the file_read function in a fail case.
  */
 TEST_F(FitnessTest, TestFileReadFail) {
-  ASSERT_EQ(NULL, file_read("test1f.bin", 'N'));
+  ASSERT_EQ(NULL, file_read("test1f", 'N'));
 }
 
 /**
@@ -84,7 +84,7 @@ TEST_F(FitnessTest, TestFileReadFail) {
  */
 TEST_F(FitnessTest, TestFileAppendFail) {
   string appendString = "TEXT STRING5";
-  ASSERT_EQ(fail, file_append("test2f.bin", appendString));
+  ASSERT_EQ(fail, file_append("test2f", appendString));
 }
 
 /**
@@ -92,7 +92,7 @@ TEST_F(FitnessTest, TestFileAppendFail) {
  */
 TEST_F(FitnessTest, TestFileEditFail) {
   string editString = "TEXT STRING EDIT";
-  ASSERT_EQ(fail, file_edit("test3f.bin", 3, editString));
+  ASSERT_EQ(fail, file_edit("test3f", 3, editString));
 }
 
 /**
@@ -100,21 +100,21 @@ TEST_F(FitnessTest, TestFileEditFail) {
  */
 TEST_F(FitnessTest, TestFileEditFail_2) {
   string editString = "TEXT STRING EDIT";
-  ASSERT_EQ(fail, file_edit("test3.bin", 100, editString));
+  ASSERT_EQ(fail, file_edit("test3", 100, editString));
 }
 
 /**
  * @brief Tests the file_line_delete function in a fail case.
  */
 TEST_F(FitnessTest, TestFileDeleteFail) {
-  ASSERT_EQ(fail, file_line_delete("test4f.bin", 2));
+  ASSERT_EQ(fail, file_line_delete("test4f", 2));
 }
 
 /**
  * @brief Tests the file_line_delete function in a fail case (line number out of range).
  */
 TEST_F(FitnessTest, TestFileDeleteFail_2) {
-  ASSERT_EQ(fail, file_line_delete("test4.bin", 100));
+  ASSERT_EQ(fail, file_line_delete("test4", 100));
 }
 
 /**
@@ -122,8 +122,8 @@ TEST_F(FitnessTest, TestFileDeleteFail_2) {
  */
 TEST_F(FitnessTest, TestUserRegister) {
   string testString = "username/password/recoverykey";
-  user_register("username", "password", "recoverykey", "usertest.bin");
-  EXPECT_EQ(testString, file_read("usertest.bin", 'N'));
+  user_register("username", "password", "recoverykey", "usertest");
+  EXPECT_EQ(testString, file_read("usertest", 'N'));
 }
 
 /**
@@ -131,50 +131,50 @@ TEST_F(FitnessTest, TestUserRegister) {
  */
 TEST_F(FitnessTest, TestUserChangePassword) {
   string testString = "username/newpassword/recoverykey";
-  EXPECT_EQ(success, user_change_password("recoverykey", "newpassword", "usertest2.bin"));
-  EXPECT_EQ(testString, file_read("usertest2.bin", 'N'));
+  EXPECT_EQ(success, user_change_password("recoverykey", "newpassword", "usertest2"));
+  EXPECT_EQ(testString, file_read("usertest2", 'N'));
 }
 
 /**
  * @brief Tests the user_change_password function in a fail case
  */
 TEST_F(FitnessTest, TestUserChangePasswordFail) {
-  EXPECT_EQ(fail, user_change_password("recoverykey", "newpassword", "usertestttt.bin"));
+  EXPECT_EQ(fail, user_change_password("recoverykey", "newpassword", "usertestttt"));
 }
 
 /**
  * @brief Tests the user_change_password function in a fail case
  */
 TEST_F(FitnessTest, TestUserChangePasswordFail_2) {
-  EXPECT_EQ(fail, user_change_password("recoverykeyaa", "newpassword", "usertest2.bin"));
+  EXPECT_EQ(fail, user_change_password("recoverykeyaa", "newpassword", "usertest2"));
 }
 
 /**
  * @brief Tests the user_login function.
  */
 TEST_F(FitnessTest, TestUserLogin) {
-  EXPECT_EQ(success, user_login("username", "password", "usertest3.bin"));
+  EXPECT_EQ(success, user_login("username", "password", "usertest3"));
 }
 
 /**
  * @brief Tests the user_login function in a fail case
  */
 TEST_F(FitnessTest, TestUserLoginFail) {
-  EXPECT_EQ(fail, user_login("username", "passwordaa", "usertest3.bin"));
+  EXPECT_EQ(fail, user_login("username", "passwordaa", "usertest3"));
 }
 
 /**
  * @brief Tests the user_login function in a fail case
  */
 TEST_F(FitnessTest, TestUserLoginFail_2) {
-  EXPECT_EQ(fail, user_login("usernameaa", "password", "usertest3.bin"));
+  EXPECT_EQ(fail, user_login("usernameaa", "password", "usertest3"));
 }
 
 /**
  * @brief Tests the user_login function in a fail case
  */
 TEST_F(FitnessTest, TestUserLoginFail_3) {
-  EXPECT_EQ(fail, user_login("username", "password", "usertestttt.bin"));
+  EXPECT_EQ(fail, user_login("username", "password", "usertestttt"));
 }
 
 /**
@@ -221,7 +221,7 @@ TEST_F(FitnessTest, TestLoginMenu) {
   fflush(stdout);
   freopen("/dev/tty", "r", stdin);
 #endif
-  EXPECT_EQ(file_read_for_test("login_menu_expected_output.bin"), file_read_for_test("login_menu_output_test.bin"));
+  EXPECT_EQ(file_read_for_test("login_menu_expected_output"), file_read_for_test("login_menu_output_test"));
 }
 
 /**
