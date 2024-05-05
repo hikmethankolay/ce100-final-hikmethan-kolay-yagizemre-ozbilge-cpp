@@ -892,10 +892,10 @@ int delete_payment_record() {
 
 /**
  * @brief login menu.
- *
+ * @param isUnitTesting a bool to check if it is unit testing.
  * @return 0.
  */
-int login_menu() {
+int login_menu(bool isUnitTesting) {
   string user_name;
   string password;
   string user_file = "user.bin";
@@ -909,16 +909,13 @@ int login_menu() {
     string otp = generateOTP(secretKey, 6);
     string user_input_otp;
     cout << "\nPlease enter single use code that we send you";
-#ifdef UNIT_TESTING
-    cinBuffer << otp;
-#define CIN_REDIR(x) (cinBuffer >> x)
-#else
     cout << "\n" << otp << " is the code, this is just the simulation of scenario:";
-#define CIN_REDIR(x) (cin >> x)
-#endif
-#ifndef UNIT_TESTING
-    CIN_REDIR(user_input_otp);
-#endif
+
+    if (isUnitTesting) {
+      user_input_otp = otp;
+    } else {
+      cin >> user_input_otp;
+    }
 
     if (user_input_otp == otp) {
       main_menu(false);

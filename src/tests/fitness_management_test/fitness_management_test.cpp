@@ -1,5 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
 //#define ENABLE_FITNESS_TEST  // Uncomment this line to enable the Calculator tests
-#define UNIT_TESTING //A variable to control cin wihle unit testing
 
 #include "gtest/gtest.h"
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure
@@ -202,6 +202,26 @@ TEST_F(FitnessTest, TestOTPUniqueness) {
   }
 
   EXPECT_EQ(otpSet.size(), numIterations);
+}
+
+/**
+ * @brief Test for login menu
+ */
+TEST_F(FitnessTest, TestLoginMenu) {
+  fflush(stdout);
+  freopen("login_menu_output_test.bin", "wb", stdout);
+  freopen("login_menu_input_test.bin", "rb", stdin);
+  login_menu(true);
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(*file_read("login_menu_expected_output.bin",'N'), *file_read("login_menu_output_test.bin",'N'));
 }
 
 /**

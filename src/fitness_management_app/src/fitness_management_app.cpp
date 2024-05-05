@@ -35,7 +35,7 @@ int main() {
     scanf("%d", &choice_login_menu);
 
     if (choice_login_menu == login_menu_choice.login_menu_login) {
-      login_menu();
+      login_menu(false);
       continue;
     } else if (choice_login_menu == login_menu_choice.login_menu_register) {
       register_menu();

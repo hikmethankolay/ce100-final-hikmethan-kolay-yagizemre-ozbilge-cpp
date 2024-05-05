@@ -161,7 +161,7 @@ del test2.bin
 del test3.bin
 del test4.bin
 del test5.bin
-del usertest1.bin
+del usertest.bin
 del usertest2.bin
 del usertest3.bin
 del user.bin

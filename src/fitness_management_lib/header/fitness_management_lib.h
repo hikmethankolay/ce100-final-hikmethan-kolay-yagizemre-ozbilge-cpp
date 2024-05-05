@@ -247,10 +247,10 @@ int main_menu(bool isGuestMode);
 
 /**
  * @brief login menu.
- *
+ * @param isUnitTesting a bool to check if it is unit testing.
  * @return 0.
  */
-int login_menu();
+int login_menu(bool isUnitTesting);
 
 /**
  * @brief register menu.
