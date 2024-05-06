@@ -187,16 +187,13 @@ Node *readTreeFromFile(ifstream &inFile) {
     return nullptr;
   }
 
-  cout << "Marker: " << marker << endl; // Print marker for debugging
-
   if (marker == 'L') {
     char data;
     int freq;
     inFile >> data; // Read data
 
     if (data == '\\' && inFile.peek() == 'n') {
-      inFile.ignore(); // Ignore the escape character
-      inFile.ignore(); // Ignore 'n'
+      inFile.ignore(); // Ignore the 'n' character
       data = '\n'; // Replace with newline character
     }
 
