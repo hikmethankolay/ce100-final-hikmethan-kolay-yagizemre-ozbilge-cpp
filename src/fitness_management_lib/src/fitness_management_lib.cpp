@@ -49,7 +49,11 @@ unordered_map<char, int> calculateFrequency(const string &text) {
   unordered_map<char, int> freqMap;
 
   for (char ch : text) {
-    freqMap[ch]++;
+    if (ch == ' ') {
+      freqMap['_']++;
+    } else {
+      freqMap[ch]++;
+    }
   }
 
   return freqMap;
@@ -119,7 +123,11 @@ string encode(const string &text, const unordered_map<char, string> &codes) {
   string encodedText = "";
 
   for (char ch : text) {
-    encodedText += codes.at(ch);
+    if (ch == ' ') {
+      encodedText += codes.at('_');
+    } else {
+      encodedText += codes.at(ch);
+    }
   }
 
   return encodedText;
@@ -197,6 +205,10 @@ Node *readTreeFromFile(ifstream &inFile) {
         inFile.ignore(); // Ignore the 'n' character
         data = '\n'; // Replace with newline character
       }
+    }
+
+    if (data == '_') {
+      data = ' '; // Replace with space character
     }
 
     inFile.ignore(1, '|'); // Ignore the delimiter
