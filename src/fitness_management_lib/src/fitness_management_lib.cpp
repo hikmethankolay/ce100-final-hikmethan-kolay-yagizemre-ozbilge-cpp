@@ -796,35 +796,36 @@ int class_menu(bool isGuestMode) {
  * @return 0.
  */
 int add_class_record() {
-    classRecord class;
-    cout << "\nPlease enter tutor";
-    cin >> class.tutor;
-    cout << "\nPlease enter date";
-    cin >> class.date;
-    cout << "\nPlease enter starting hour";
-    cin >> class.startingHour;
-    cout << "\nPlease enter finishing hour";
-    cin >> class.finishingHour;
-    cout << "\nPlease enter student list";
-    cin >> class.studentList[100];
-    // Format the string first
-    ostringstream formattedRecord;
-    formattedRecord << "/ tutor:" << class.tutor;
-                    << "/ date:" << class.date;
-                    << "/ Starting Hour:" << class.startingHour;
-                    << "/ Finishing Hour:" << class.finishingHour;
-                    << "Student List" << class.studentList[100];
-   string result = formattedRecord.str();
-   FILE* myFile;
-   myFile = fopen("class_records.bin", "rb");
-   if (myFile == NULL) {
-       file_write("class_records.bin", result);
-       return 0;
-   } else {
-       fclose(myFile);
-       file_append("class_records.bin", result);
-       return 0;
-   }
+  classRecord classRecord;
+  cout << "\nPlease enter tutor";
+  cin >> classRecord.tutor;
+  cout << "\nPlease enter date";
+  cin >> classRecord.date;
+  cout << "\nPlease enter starting hour";
+  cin >> classRecord.startingHour;
+  cout << "\nPlease enter finishing hour";
+  cin >> classRecord.finishingHour;
+  cout << "\nPlease enter student list";
+  cin >> classRecord.studentList[100];
+  // Format the string first
+  ostringstream formattedRecord;
+  formattedRecord << "Tutor:" << classRecord.tutor
+                  << " / Class date:" << classRecord.date
+                  << " / Starting Hour:" << classRecord.startingHour
+                  << " / Finishing Hour:" << classRecord.finishingHour
+                  << " / Student List:" << classRecord.studentList[100];
+  string result = formattedRecord.str();
+  FILE *myFile;
+  myFile = fopen("class_records", "rb");
+
+  if (myFile == NULL) {
+    file_write("class_records", result);
+    return 0;
+  } else {
+    fclose(myFile);
+    file_append("class_records", result);
+    return 0;
+  }
 };
 
 /**
@@ -833,34 +834,34 @@ int add_class_record() {
  * @return 0.
  */
 int edit_class_record() {
-    classRecord class;
-    int RecordNumberToEdit;
-    cout << "\nPlease enter a record number to edit:";
-    cin >> RecordNumberToEdit;
-    cout << "\nPlease enter tutor";
-    cin >> class.tutor;
-    cout << "\nPlease enter date";
-    cin >> class.date;
-    cout << "\nPlease enter starting hour";
-    cin >> class.startingHour;
-    cout << "\nPlease enter finishing hour";
-    cin >> class.finishingHour;
-    cout << "\nPlease enter student list";
-    cin >> class.studentList[100];
-    // Format the string first
-    ostringstream formattedRecord;
-    formattedRecord << "/ tutor:" << class.tutor;
-                    << "/ date:" << class.date;
-                    << "/ Starting Hour:" << class.startingHour;
-                    << "/ Finishing Hour:" << class.finishingHour;
-                    << "Student List" << class.studentList[100];
-    string result = formattedRecord.str();
+  classRecord classRecord;
+  int RecordNumberToEdit;
+  cout << "\nPlease enter a record number to edit:";
+  cin >> RecordNumberToEdit;
+  cout << "\nPlease enter tutor";
+  cin >> classRecord.tutor;
+  cout << "\nPlease enter date";
+  cin >> classRecord.date;
+  cout << "\nPlease enter starting hour";
+  cin >> classRecord.startingHour;
+  cout << "\nPlease enter finishing hour";
+  cin >> classRecord.finishingHour;
+  cout << "\nPlease enter student list";
+  cin >> classRecord.studentList[100];
+  // Format the string first
+  ostringstream formattedRecord;
+  formattedRecord << "Tutor:" << classRecord.tutor
+                  << " / Class date:" << classRecord.date
+                  << " / Starting Hour:" << classRecord.startingHour
+                  << " / Finishing Hour:" << classRecord.finishingHour
+                  << " / Student List:" << classRecord.studentList[100];
+  string result = formattedRecord.str();
 
-    if (file_edit("class_records.bin", RecordNumberToEdit, result) == 0) {
-      return 0;
-    } else {
-      return -1;
-    }
+  if (file_edit("class_records", RecordNumberToEdit, result) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
@@ -869,15 +870,15 @@ int edit_class_record() {
  * @return 0.
  */
 int delete_class_record() {
-    cout << "\nPlease enter record number to delete:";
-    int RecordNumberToDelete;
-    cin >> RecordNumberToDelete;
+  cout << "\nPlease enter record number to delete:";
+  int RecordNumberToDelete;
+  cin >> RecordNumberToDelete;
 
-    if (file_line_delete("class_records.bin", RecordNumberToDelete) == 0) {
-        return 0;
-    } else {
-      return -1;
-    }
+  if (file_line_delete("class_records", RecordNumberToDelete) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
@@ -932,33 +933,33 @@ int payment_menu(bool isGuestMode) {
  * @return 0.
  */
 int add_payment_record() {
-    paymentRecord payment;
-    cout << "\nPlease enter memberID";
-    cin >> payment.memberID;
-    cout << "\nPlease enter paid amount";
-    cin >> payment.paidAmount;
-    cout << "\nPlease enter payment date";
-    cin >> payment.paymentDate;
-    cout << "\nPlease enter next payment date";
-    cin >> payment.nextPaymentDate;
-    // Format the string first
-    ostringstream formattedRecord;
-    formattedRecord << "/ memberID" << payment.memberID;
-    << "/ paid amount" << payment.paidAmount;
-    << "/ payment date:" << payment.paymentDate;
-    << "/ next payment date:" << payment.nextPaymentDate;
-    string result = formattedRecord.str();
-    FILE* myFile;
-    myFile = fopen("payment_records.bin", "rb");
-    if (myFile == NULL) {
-        file_write("payment_records.bin", result);
-        return 0;
-    }
-    else {
-        fclose(myFile);
-        file_append("payment_records.bin", result);
-        return 0;
-    }
+  paymentRecord payment;
+  cout << "\nPlease enter memberID";
+  cin >> payment.memberID;
+  cout << "\nPlease enter paid amount";
+  cin >> payment.paidAmount;
+  cout << "\nPlease enter payment date";
+  cin >> payment.paymentDate;
+  cout << "\nPlease enter next payment date";
+  cin >> payment.nextPaymentDate;
+  // Format the string first
+  ostringstream formattedRecord;
+  formattedRecord << "MemberID:" << payment.memberID
+                  << " / Paid amount" << payment.paidAmount
+                  << " / Payment date:" << payment.paymentDate
+                  << " / Next payment date:" << payment.nextPaymentDate;
+  string result = formattedRecord.str();
+  FILE *myFile;
+  myFile = fopen("payment_records", "rb");
+
+  if (myFile == NULL) {
+    file_write("payment_records", result);
+    return 0;
+  } else {
+    fclose(myFile);
+    file_append("payment_records", result);
+    return 0;
+  }
 };
 
 /**
@@ -967,29 +968,29 @@ int add_payment_record() {
  * @return 0.
  */
 int edit_payment_record() {
-    paymentRecord payment;
-    int RecordNumberToEdit;
-    cout << "\nPlease enter memberID";
-    cin >> payment.memberID;
-    cout << "\nPlease enter paid amount";
-    cin >> payment.paidAmount;
-    cout << "\nPlease enter payment date";
-    cin >> payment.paymentDate;
-    cout << "\nPlease enter next payment date";
-    cin >> payment.nextPaymentDate;
-    // Format the string first
-    ostringstream formattedRecord;
-    formattedRecord << "/ memberID" << payment.memberID;
-    << "/ paid amount" << payment.paidAmount;
-    << "/ payment date:" << payment.paymentDate;
-    << "/ next payment date:" << payment.nextPaymentDate;
-    string result = formattedRecord.str();
+  paymentRecord payment;
+  int RecordNumberToEdit;
+  cout << "\nPlease enter memberID";
+  cin >> payment.memberID;
+  cout << "\nPlease enter paid amount";
+  cin >> payment.paidAmount;
+  cout << "\nPlease enter payment date";
+  cin >> payment.paymentDate;
+  cout << "\nPlease enter next payment date";
+  cin >> payment.nextPaymentDate;
+  // Format the string first
+  ostringstream formattedRecord;
+  formattedRecord << "MemberID:" << payment.memberID
+                  << " / Paid amount" << payment.paidAmount
+                  << " / Payment date:" << payment.paymentDate
+                  << " / Next payment date:" << payment.nextPaymentDate;
+  string result = formattedRecord.str();
 
-    if (file_edit("payment_records.bin", RecordNumberToEdit, result) == 0) {
-        return 0;
-    } else {
-     return -1;
-    }
+  if (file_edit("payment_records", RecordNumberToEdit, result) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
@@ -998,15 +999,15 @@ int edit_payment_record() {
  * @return 0.
  */
 int delete_payment_record() {
-    cout << "\nPlease enter record number to delete:";
-    int RecordNumberToDelete;
-    cin >> RecordNumberToDelete;
+  cout << "\nPlease enter record number to delete:";
+  int RecordNumberToDelete;
+  cin >> RecordNumberToDelete;
 
-    if (file_line_delete("payment_records.bin", RecordNumberToDelete) == 0) {
-     return 0;
-    } else {
-      return -1;
-    }
+  if (file_line_delete("payment_records", RecordNumberToDelete) == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
 };
 
 /**
