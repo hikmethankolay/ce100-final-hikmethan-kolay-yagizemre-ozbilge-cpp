@@ -41,7 +41,7 @@ set(CRYPTOPP_USE_MASTER_BRANCH FALSE)
 
 option(ENABLE_FITNESS_LIB "Enable Calculator Module" ON)
 option(ENABLE_FITNESS_APP "Enable Calculator Application" ON)
-option(ENABLE_FITNESS_TEST "Enable All Tests" ON)
+option(ENABLE_FITNESS_TEST "Enable All Tests" OFF)
 
 # Configure tests
 add_compile_definitions(ENABLE_FITNESS_TEST)

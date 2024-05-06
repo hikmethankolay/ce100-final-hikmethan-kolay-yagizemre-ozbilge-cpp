@@ -13,6 +13,9 @@
 #include <random>
 #include <sstream>
 #include <iomanip>
+#include <queue>
+#include <unordered_map>
+#include <vector>
 
 using namespace std;
 
@@ -37,6 +40,189 @@ struct sub_menu_variables sub_menu;
 fstream myFile;  /**< File stream object for file operations. */
 
 /**
+ * @brief Calculates frequency of characters in the input text.
+ *
+ * @param text Input text.
+ * @return unordered_map<char, int> Frequency map of characters.
+ */
+unordered_map<char, int> calculateFrequency(const string &text) {
+  unordered_map<char, int> freqMap;
+
+  for (char ch : text) {
+    freqMap[ch]++;
+  }
+
+  return freqMap;
+}
+
+/**
+ * @brief Builds the Huffman tree based on character frequencies.
+ *
+ * @param freqMap Frequency map of characters.
+ * @return Node* Root of the Huffman tree.
+ */
+Node *buildHuffmanTree(const unordered_map<char, int> &freqMap) {
+  priority_queue<Node *, vector<Node *>, Compare> pq;
+
+  // Create leaf nodes and add them to the priority queue
+  for (auto &entry : freqMap) {
+    pq.push(new Node(entry.first, entry.second));
+  }
+
+  // Merge nodes until there's only one node left in the queue
+  while (pq.size() > 1) {
+    Node *left = pq.top();
+    pq.pop();
+    Node *right = pq.top();
+    pq.pop();
+    // Create a new internal node with combined frequency
+    Node *newNode = new Node('$', left->freq + right->freq);
+    newNode->left = left;
+    newNode->right = right;
+    // Add the new node back to the priority queue
+    pq.push(newNode);
+  }
+
+  // Return the root of the Huffman tree
+  return pq.top();
+}
+
+
+/**
+ * @brief Traverses the Huffman tree and builds the codewords.
+ *
+ * @param root Root of the Huffman tree.
+ * @param code Current code.
+ * @param codes Map to store character codes.
+ */
+void buildCodes(Node *root, string code, unordered_map<char, string> &codes) {
+  if (root == nullptr) return;
+
+  // If leaf node is reached, store the code
+  if (root->data != '$') {
+    codes[root->data] = code;
+  }
+
+  // Traverse left and right
+  buildCodes(root->left, code + "0", codes);
+  buildCodes(root->right, code + "1", codes);
+}
+
+/**
+ * @brief Encodes the input text using Huffman codes.
+ *
+ * @param text Input text.
+ * @param codes Map of character codes.
+ * @return string Encoded text.
+ */
+string encode(const string &text, const unordered_map<char, string> &codes) {
+  string encodedText = "";
+
+  for (char ch : text) {
+    encodedText += codes.at(ch);
+  }
+
+  return encodedText;
+}
+
+/**
+ * @brief Decodes the encoded text using Huffman codes.
+ *
+ * @param encodedText Encoded text.
+ * @param root Root of the Huffman tree.
+ * @return string Decoded text.
+ */
+string decode(const string &encodedText, Node *root) {
+  string decodedText = "";
+  Node *current = root;
+
+  for (char bit : encodedText) {
+    if (bit == '0') {
+      current = current->left;
+    } else {
+      current = current->right;
+    }
+
+    if (current->left == nullptr && current->right == nullptr) {
+      decodedText += current->data;
+      current = root; // Reset current to root for next character
+    }
+  }
+
+  return decodedText;
+}
+
+/**
+ * @brief Writes the Huffman tree to a file.
+ *
+ * @param outFile Output file stream.
+ * @param node Current node being written.
+ */
+void writeTreeToFile(ofstream &outFile, Node *node) {
+  if (node->left == nullptr && node->right == nullptr) {
+    char data = node->data;
+
+    if (data == '\n') {
+      outFile << "L" << "\\n" << "|" << node->freq; // Special handling for newline character
+    } else {
+      outFile << "L" << data << "|" << node->freq;
+    }
+  } else {
+    outFile << "I" << node->data << "|" << node->freq;
+    writeTreeToFile(outFile, node->left);
+    writeTreeToFile(outFile, node->right);
+  }
+}
+/**
+ * @brief Reads the Huffman tree from a file.
+ *
+ * @param inFile Input file stream.
+ * @return Node* Root of the Huffman tree.
+ */
+Node *readTreeFromFile(ifstream &inFile) {
+  char marker;
+
+  if (!(inFile >> marker)) {
+    cout << "End of file reached!" << endl;
+    return nullptr;
+  }
+
+  cout << "Marker: " << marker << endl; // Print marker for debugging
+
+  if (marker == 'L') {
+    char data;
+    int freq;
+    inFile >> data; // Read data
+
+    if (data == '\\' && inFile.peek() == 'n') {
+      inFile.ignore(); // Ignore the escape character
+      inFile.ignore(); // Ignore 'n'
+      data = '\n'; // Replace with newline character
+    }
+
+    inFile.ignore(1, '|'); // Ignore the delimiter
+    inFile >> freq; // Read frequency
+    Node *leafNode = new Node(data, freq);
+    return leafNode;
+  } else if (marker == 'I') {
+    char data;
+    int freq;
+    inFile >> data; // Read data
+    inFile.ignore(1, '|'); // Ignore the delimiter
+    inFile >> freq; // Read frequency
+    Node *internalNode = new Node(data, freq);
+    internalNode->left = readTreeFromFile(inFile);
+    internalNode->right = readTreeFromFile(inFile);
+    return internalNode;
+  } else {
+    cout << "Invalid marker in file!" << endl;
+    return nullptr;
+  }
+}
+
+
+
+/**
  * @brief Opens a binary file, deletes all of its content, and writes given text to it.
  *
  * @param file_name The name of the file to write.
@@ -44,10 +230,27 @@ fstream myFile;  /**< File stream object for file operations. */
  * @return 0 on success.
  */
 int file_write(string file_name, string text) {
-  text = "0-)" + text + "\n";
-  myFile.open(file_name, ios::out | ios::binary | ios::trunc); // Opens file with output tag
-  myFile.write(text.c_str(), text.length()); // Deletes everything inside file and writes text variable
-  myFile.close();
+  //text = "0-)" + text + "\n";
+  text = "0-)" + text;
+  unordered_map<char, int> freqMap = calculateFrequency(text);
+  Node *root = buildHuffmanTree(freqMap);
+  unordered_map<char, string> codes;
+  buildCodes(root, "", codes);
+  string encodedText = encode(text, codes);
+  // Open the binary file for writing
+  ofstream outFile(file_name + ".bin", ios::binary);
+
+  // Write the encoded binary data to the binary file
+  for (char i : encodedText) {
+    outFile.write(&i, sizeof(char));
+  }
+
+  outFile.close(); // Close the file
+  // Open the Huffman file for writing
+  ofstream outFileHuffman(file_name + "_huffman.bin", ios::binary);
+  // Write the Huffman tree to the Huffman file
+  writeTreeToFile(outFileHuffman, root);
+  outFileHuffman.close(); // Close the Huffman file
   return 0;
 }
 
@@ -58,33 +261,61 @@ int file_write(string file_name, string text) {
  * @param print_to_console It is a variable to disabling wrting content to console.
  * @return The contents of the file as a statically allocated string.
  */
-char *file_read(const char *file_name, char print_to_console) {
-  const int MAX_FILE_SIZE = 4096;
-  static char content[MAX_FILE_SIZE]; // Static buffer for file content
-  ifstream myFile(file_name, ios::binary);
+string file_read(string file_name, const char print_to_console) {
+  ifstream myFile(file_name + ".bin", ios::binary);
 
   if (!myFile.is_open()) {
-    std::cerr << "File operation failed, There is no record" << std::endl;
-    return nullptr;
+    cout << "File operation failed, There is no record" << endl;
+    return "-1";
   }
 
-  size_t length = 0;
-  int ch;
-
-  while ((ch = myFile.get()) != EOF && length < MAX_FILE_SIZE - 1) { // Ensure there's room for null terminator
-    if (ch == '\r') continue; // Skip '\r'
-
-    content[length++] = ch; // Append character to content
-  }
-
-  content[length] = '\0'; // Null-terminate the string
+  // Get the size of the file
+  myFile.seekg(0, ios::end);
+  streamoff fileSize = myFile.tellg();
+  myFile.seekg(0, ios::beg);
+  // Read the entire file into a string
+  string content(fileSize, '\0');
+  myFile.read(&content[0], fileSize);
+  myFile.close(); // Close the file
+  // Decode the content and return it
+  ifstream inFile;
+  inFile.open(file_name + "_huffman.bin", ios::binary);
+  Node *root = readTreeFromFile(inFile);
+  inFile.close();
+  string decodedText = decode(content, root);
 
   if (print_to_console == 'Y') {
-    cout << content; // Print the content to the console
+    cout << decodedText; // Print the content to the console
+  }
+
+  return decodedText;
+}
+
+/**
+ * @brief Opens a binary file, reads all of its content, separates lines with "\n", and writes them to console. Also returns the contents of the file as a string for unit tests.
+ *
+ * @param file_name The name of the file to read from.
+ *
+ * @return The contents of the file as a statically allocated string.
+ */
+string file_read_for_test(const string file_name) {
+  string content;
+  ifstream myFile(file_name+".bin", ios::binary);
+
+  if (!myFile.is_open()) {
+    std::cout << "File operation failed, There is no record" << std::endl;
+    return "-1";
+  }
+
+  int ch;
+
+  while ((ch = myFile.get()) != EOF) { // Ensure there's room for null terminator
+    if (ch == '\r') continue; // Skip '\r'
+
+    content+=ch;
   }
 
   myFile.close(); // Ensure the file is closed
-  // Return a pointer to the static buffer.
   return content;
 }
 
@@ -97,35 +328,32 @@ char *file_read(const char *file_name, char print_to_console) {
  * @return 0 on success.
  */
 int file_append(string file_name, string text) {
-  myFile.open(file_name, ios::in | ios::binary); // Opens file with input tag
+  char mode = 'N';
+  string file_content = file_read(file_name, mode);
+
+  if(file_content == "-1") {
+    return -1;
+  }
+
   string lastLine;
   string currentLine;
-  char i;
 
-  if (myFile.is_open()) {
-    while (myFile.get(i)) {
-      if (i == '\n') {
-        currentLine = currentLine + i;
-        lastLine = currentLine;
-        currentLine = "";
-        continue;
-      }
-
+  for (char i : file_content) {
+    if (i == '\n') {
       currentLine = currentLine + i;
+      lastLine = currentLine;
+      currentLine = "";
+      continue;
     }
 
-    myFile.close();
-  } else {
-    cout << "\nFile operation failed";
-    return -1;
+    currentLine = currentLine + i;
   }
 
   size_t pos = lastLine.find("-)"); // Finds the location of "-)" in the last line
   int lineNumber = stoi(lastLine.substr(0, pos)) + 1; // Finds the number for the appended line
   text = to_string(lineNumber) + "-)" + text + "\n";
-  myFile.open(file_name, ios::app | ios::binary); // Opens file with append tag
-  myFile.write(text.c_str(), text.length()); // Appends text with its line number
-  myFile.close();
+  file_content += text;
+  file_write(file_name,file_content);
   return 0;
 }
 
@@ -139,52 +367,45 @@ int file_append(string file_name, string text) {
  * @return 0 on success.
  */
 int file_edit(string file_name, int line_number_to_edit, string new_line) {
-  const int max_line_count = 100; // A variable for array
-  char i;
-  myFile.open(file_name, ios::in | ios::binary); // Opens file with read tag
+  char mode = 'N';
+  string file_content = file_read(file_name, mode);
 
-  if (myFile.is_open()) {
-    string lines[max_line_count]; // An array to store lines
-    string line;
-    int line_count = 0; // A variable for an if statement to check if the line that the user wants to edit exists
-
-    while (myFile.get(i)) {
-      if (i == '\n') {
-        line = line + i;
-        lines[line_count++] = line;
-        line = "";
-        continue;
-      }
-
-      line = line + i;
-    }
-
-    myFile.close();
-
-    if (line_number_to_edit > 0 && line_number_to_edit <= line_count) {
-      lines[line_number_to_edit] = to_string(line_number_to_edit) + "-)" + new_line + "\n"; // Changes a member of Lines array to a new line with its line number
-    } else {
-      cout << "\nYou can only edit existing lines";
-      return -1;
-    }
-
-    myFile.open(file_name, ios::out | ios::binary); // Opens file in write mode
-
-    for (const string &updated_lines : lines) {  // Writes every member of the lines array to the file
-      if (updated_lines == "") {
-        break; // Stops if there is nothing on the next line since arrays have fixed slots inside them from the start
-      }
-
-      myFile.write(updated_lines.c_str(), updated_lines.length());
-    }
-
-    myFile.close();
-    cout << "\nData successfully edited";
-    return 0;
-  } else {
-    cout << "\nFile operation failed";
+  if(file_content == "-1") {
     return -1;
   }
+
+  vector<string> lines;
+  string line;
+  int line_count = 0; // A variable for an if statement to check if the line that the user wants to edit exists
+
+  for(char i : file_content) {
+    if (i == '\n') {
+      line = line + i;
+      lines.push_back(line);
+      line_count++;
+      line = "";
+      continue;
+    }
+
+    line = line + i;
+  }
+
+  if (line_number_to_edit > 0 && line_number_to_edit <= line_count) {
+    lines[line_number_to_edit] = to_string(line_number_to_edit) + "-)" + new_line + "\n"; // Changes a member of Lines array to a new line with its line number
+  } else {
+    cout << "\nYou can only edit existing lines";
+    return -1;
+  }
+
+  string new_file_content;
+
+  for(string i : lines) {
+    new_file_content += i;
+  }
+
+  file_write(file_name, new_file_content);
+  cout << "\nData successfully edited";
+  return 0;
 }
 
 /**
@@ -196,65 +417,59 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
  * @return 0 on success.
  */
 int file_line_delete(string file_name, int line_number_to_delete) {
-  const int max_line_count = 100; // A variable for an array to work properly
-  char i;
-  myFile.open(file_name, ios::in | ios::binary); // Opens file in read mode
+  char mode = 'N';
+  string file_content = file_read(file_name, mode);
 
-  if (myFile.is_open()) {
-    string lines[max_line_count]; // An array to store lines
-    string line;
-    int line_count = 0; // A variable for an if statement to check if there is a line that the user wants to delete
-
-    while (myFile.get(i)) {// Gets lines one by one and assigns them to the line variable
-      if (i == '\n') {
-        line = line + i;
-        lines[line_count++] = line; // Adds the line variable to the lines array and increases line_count after the operation
-        line = "";
-        continue;
-      }
-
-      line = line + i;
-    }
-
-    if (line_number_to_delete > 0 && line_number_to_delete < line_count) {
-      // Shift elements to "erase" the line at line_number_to_delete
-      for (int i = line_number_to_delete; i < line_count - 1; ++i) {
-        lines[i] = lines[i + 1];
-      }
-
-      lines[line_count - 1] = ""; // Clears the last element of lines so the same thing wouldn't write to the file twice
-    } else {
-      cout << "\nYou can only erase existing lines";
-      myFile.close();
-      return -1;
-    }
-
-    myFile.close();
-    myFile.open(file_name, ios::out | ios::binary); // Opens the file in write mode
-
-    for (const string &updated_lines : lines) {
-      if (updated_lines == "") {
-        break; // Stops if there is nothing on the next line since arrays have fixed slots inside them from the start
-      }
-
-      size_t pos = updated_lines.find("-)"); // Finds the position of "-)"
-      int lineNumber = stoi(updated_lines.substr(0, pos)); // Finds each line's line number
-
-      if (lineNumber > line_number_to_delete) { // Decreases a line's line number if it's bigger than the deleted line's line number
-        string updated_line_with_new_number = to_string(lineNumber - 1) + updated_lines.substr(pos);
-        myFile.write(updated_line_with_new_number.c_str(), updated_line_with_new_number.length());
-      } else {
-        myFile.write(updated_lines.c_str(), updated_lines.length());
-      }
-    }
-
-    cout << "\nData successfully deleted";
-    myFile.close();
-    return 0;
-  } else {
-    cout << "\nFile operation failed";
+  if(file_content == "-1") {
     return -1;
   }
+
+  vector<string> lines;
+  string line;
+  int line_count = 0; // A variable for an if statement to check if the line that the user wants to edit exists
+
+  for(char i : file_content) {
+    if (i == '\n') {
+      line = line + i;
+      lines.push_back(line);
+      line_count++;
+      line = "";
+      continue;
+    }
+
+    line = line + i;
+  }
+
+  if (line_number_to_delete > 0 && line_number_to_delete < line_count) {
+    // Shift elements to "erase" the line at line_number_to_delete
+    for (int i = line_number_to_delete; i < line_count - 1; ++i) {
+      lines[i] = lines[i + 1];
+    }
+
+    lines[line_count - 1] = ""; // Clears the last element of lines so the same thing wouldn't write to the file twice
+  } else {
+    cout << "\nYou can only erase existing lines";
+    myFile.close();
+    return -1;
+  }
+
+  string new_file_content;
+
+  for (const string &updated_lines : lines) {
+    size_t pos = updated_lines.find("-)"); // Finds the position of "-)"
+    int lineNumber = stoi(updated_lines.substr(0, pos)); // Finds each line's line number
+
+    if (lineNumber > line_number_to_delete) { // Decreases a line's line number if it's bigger than the deleted line's line number
+      string updated_line_with_new_number = to_string(lineNumber - 1) + updated_lines.substr(pos);
+      new_file_content += updated_line_with_new_number;
+    } else {
+      new_file_content += updated_lines;
+    }
+  }
+
+  file_write(file_name, new_file_content);
+  cout << "\nData successfully deleted";
+  return 0;
 }
 
 /**
@@ -269,11 +484,18 @@ int file_line_delete(string file_name, int line_number_to_delete) {
  * @return -1 on fail.
  */
 int user_register(string new_username, string new_password, string new_recovery_key, string user_file) {
-  string login_info;
-  login_info = new_username + "/" + new_password + "/" + new_recovery_key;
-  myFile.open(user_file, ios::out | ios::binary | ios::trunc); // Opens file with output tag
-  myFile.write(login_info.c_str(), login_info.length()); // Deletes everything inside file and writes login_info variable
+  string login_info = new_username + "/" + new_password + "/" + new_recovery_key;
+  unordered_map<char, int> freqMap = calculateFrequency(login_info);
+  Node *root = buildHuffmanTree(freqMap);
+  unordered_map<char, string> codes;
+  buildCodes(root, "", codes);
+  string encodedText = encode(login_info, codes);
+  myFile.open("user.bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
+  myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
   myFile.close();
+  ofstream outFile("user_huffman.bin", ios::binary);
+  writeTreeToFile(outFile, root);
+  outFile.close();
   return 0;
 }
 
@@ -292,15 +514,14 @@ int user_login(string username, string password, string user_file) {
   string password_read;
   string recovery_key_read;
   int count = 0;
-  char i;
-  myFile.open(user_file, ios::in | ios::binary); // Opens file with input tag
+  char mode = 'N';
+  string file_content = file_read(user_file, mode);
 
-  if (!myFile.is_open()) {
-    cout << "\nThere is no user info, Please register first.\n";
+  if(file_content == "-1") {
     return -1;
   }
 
-  while (myFile.get(i)) {
+  for(char i : file_content) {
     if (i == '/') {
       count++;
       continue;
@@ -313,15 +534,6 @@ int user_login(string username, string password, string user_file) {
     } else if (count == 2) {
       break;
     }
-  }
-
-  myFile.close();
-
-  if (username == "None" && password == "None") {
-    cout << "\nPlease enter username:";
-    cin >> username;
-    cout << "\nPlease enter password:";
-    cin >> password;
   }
 
   if (username == username_read && password == password_read) {
@@ -348,50 +560,44 @@ int user_change_password(string recovery_key, string new_password, string user_f
   string recovery_key_read;
   string new_login_info;
   int count = 0;
-  myFile.open(user_file, ios::in | ios::binary); // Opens file with input tag
+  char mode = 'N';
+  string file_content = file_read(user_file, mode);
 
-  if (myFile.is_open()) {
-    char i;
-
-    while (myFile.get(i)) {
-      if (i == '/') {
-        count++;
-        continue;
-      }
-
-      if (count == 0) {
-        username_read = username_read + i;
-      } else if (count == 1) {
-        continue;
-      } else if (count == 2) {
-        recovery_key_read = recovery_key_read + i;
-      }
-    }
-
-    myFile.close();
-  } else {
+  if(file_content == "-1") {
     cout << "\nThere is no user info, Please register first.\n";
     return -1;
   }
 
-  if (recovery_key == "None") {
-    cout << "\nPlease enter your recovery key:";
-    cin >> recovery_key;
+  for(char i : file_content) {
+    if (i == '/') {
+      count++;
+      continue;
+    }
+
+    if (count == 0) {
+      username_read = username_read + i;
+    } else if (count == 1) {
+      continue;
+    } else if (count == 2) {
+      recovery_key_read = recovery_key_read + i;
+    }
   }
 
   if (recovery_key_read == recovery_key) {
     cout << "\nRecovey Key Approved\n";
-
-    if (new_password == "None") {
-      cout << "\nPlease enter a new password:";
-      cin >> new_password;
-    }
-
     new_login_info = username_read + "/" + new_password + "/" + recovery_key_read;
-    myFile.open(user_file, ios::out | ios::binary | ios::trunc); // Opens file with output tag
-    myFile.write(new_login_info.c_str(), new_login_info.length()); // Deletes everything inside file and writes login_info variable
+    unordered_map<char, int> freqMap = calculateFrequency(new_login_info);
+    Node *root = buildHuffmanTree(freqMap);
+    unordered_map<char, string> codes;
+    buildCodes(root, "", codes);
+    string encodedText = encode(new_login_info, codes);
+    myFile.open("user.bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
+    myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
     myFile.close();
-    cout << "\nPassword changed succesfully";
+    ofstream outFile("user_huffman.bin", ios::binary);
+    writeTreeToFile(outFile, root);
+    outFile.close();
+    cout << "\nPassword Changed successfully";
     return 0;
   } else {
     cout << "\nWrong Recovery Key";
@@ -493,24 +699,22 @@ int member_menu(bool isGuestMode) {
 
     if (choice_member == sub_menu.sub_menu_show) {
       cout << "\n--------------Membership Records--------------\n";
-      file_read("membership_records.bin",'Y');
+      file_read("member_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_member == sub_menu.sub_menu_add) {
-        add_member_record();
-        continue;
-      } else if (choice_member == sub_menu.sub_menu_edit) {
-        edit_member_record();
-        continue;
-      } else if (choice_member == sub_menu.sub_menu_delete) {
-        delete_member_record();
-        continue;
-      }
-    } else if (choice_member == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_member == sub_menu.sub_menu_add || choice_member == sub_menu.sub_menu_edit || choice_member == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_member == sub_menu.sub_menu_add) {
+      add_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_edit) {
+      edit_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_delete) {
+      delete_member_record();
+      continue;
+    } else if (choice_member == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -549,11 +753,11 @@ int add_member_record() {
   myFile = fopen("member_records.bin", "rb");
 
   if (myFile == NULL) {
-    file_write("member_records.bin", result);
+    file_write("member_records", result);
     return 0;
   } else {
     fclose(myFile);
-    file_append("member_records.bin", result);
+    file_append("member_records", result);
     return 0;
   }
 };
@@ -588,7 +792,7 @@ int edit_member_record() {
                   << " / First registration date:" << member.firstRegistrationDate;
   string result = formattedRecord.str();
 
-  if (file_edit("member_records.bin", RecordNumberToEdit, result) == 0) {
+  if (file_edit("member_records", RecordNumberToEdit, result) == 0) {
     return 0;
   } else {
     return -1;
@@ -605,7 +809,7 @@ int delete_member_record() {
   int RecordNumberToDelete;
   cin >> RecordNumberToDelete;
 
-  if (file_line_delete("member_records.bin", RecordNumberToDelete) == 0) {
+  if (file_line_delete("member_records", RecordNumberToDelete) == 0) {
     return 0;
   } else {
     return -1;
@@ -631,24 +835,22 @@ int subs_menu(bool isGuestMode) {
 
     if (choice_sub == sub_menu.sub_menu_show) {
       cout << "\n--------------Membership Records--------------\n";
-      file_read("subscription_records.bin",'Y');
+      file_read("subscription_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_sub == sub_menu.sub_menu_add) {
-        add_subs_record();
-        continue;
-      } else if (choice_sub == sub_menu.sub_menu_edit) {
-        edit_subs_record();
-        continue;
-      } else if (choice_sub == sub_menu.sub_menu_delete) {
-        delete_subs_record();
-        continue;
-      }
-    } else if (choice_sub == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_sub == sub_menu.sub_menu_add || choice_sub == sub_menu.sub_menu_edit || choice_sub == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_sub == sub_menu.sub_menu_add) {
+      add_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_edit) {
+      edit_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_delete) {
+      delete_subs_record();
+      continue;
+    } else if (choice_sub == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -681,14 +883,14 @@ int add_subs_record() {
                   << " / Subcription tier:" << sub.subscriptionTier;
   string result = formattedRecord.str();
   FILE *myFile;
-  myFile = fopen("subciption_records.bin", "rb");
+  myFile = fopen("subscription_records.bin", "rb");
 
   if (myFile == NULL) {
-    file_write("subciption_records.bin", result);
+    file_write("subscription_records", result);
     return 0;
   } else {
     fclose(myFile);
-    file_append("subciption_records.bin", result);
+    file_append("subscription_records", result);
     return 0;
   }
 };
@@ -720,7 +922,7 @@ int edit_subs_record() {
                   << " / Subcription tier:" << sub.subscriptionTier;
   string result = formattedRecord.str();
 
-  if (file_edit("subciption_records.bin", RecordNumberToEdit, result) == 0) {
+  if (file_edit("subscription_records", RecordNumberToEdit, result) == 0) {
     return 0;
   } else {
     return -1;
@@ -737,7 +939,7 @@ int delete_subs_record() {
   int RecordNumberToDelete;
   cin >> RecordNumberToDelete;
 
-  if (file_line_delete("subciption_records.bin", RecordNumberToDelete) == 0) {
+  if (file_line_delete("subscription_records", RecordNumberToDelete) == 0) {
     return 0;
   } else {
     return -1;
@@ -763,24 +965,22 @@ int class_menu(bool isGuestMode) {
 
     if (choice_class == sub_menu.sub_menu_show) {
       cout << "\n--------------Class Records--------------\n";
-      file_read("class_records.bin",'Y');
+      file_read("class_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_class == sub_menu.sub_menu_add) {
-        add_class_record();
-        continue;
-      } else if (choice_class == sub_menu.sub_menu_edit) {
-        edit_class_record();
-        continue;
-      } else if (choice_class == sub_menu.sub_menu_delete) {
-        delete_class_record();
-        continue;
-      }
-    } else if (choice_class == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_class == sub_menu.sub_menu_add || choice_class == sub_menu.sub_menu_edit || choice_class == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_class == sub_menu.sub_menu_add) {
+      add_subs_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_edit) {
+      edit_subs_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_delete) {
+      delete_subs_record();
+      continue;
+    } else if (choice_class == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -900,24 +1100,22 @@ int payment_menu(bool isGuestMode) {
 
     if (choice_payment == sub_menu.sub_menu_show) {
       cout << "\n--------------Payment Records--------------\n";
-      file_read("payment_records.bin",'Y');
+      file_read("payment_records",'Y');
       continue;
-    } else if (isGuestMode == false) {
-      if (choice_payment == sub_menu.sub_menu_add) {
-        add_payment_record();
-        continue;
-      } else if (choice_payment == sub_menu.sub_menu_edit) {
-        edit_payment_record();
-        continue;
-      } else if (choice_payment == sub_menu.sub_menu_delete) {
-        delete_payment_record();
-        continue;
-      }
-    } else if (choice_payment == sub_menu.sub_menu_return) {
-      break;
-    } else if (isGuestMode == true) {
+    } else if (isGuestMode == true && (choice_payment == sub_menu.sub_menu_add || choice_payment == sub_menu.sub_menu_edit || choice_payment == sub_menu.sub_menu_delete)) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
+    } else if (choice_payment == sub_menu.sub_menu_add) {
+      add_subs_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_edit) {
+      edit_subs_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_delete) {
+      delete_subs_record();
+      continue;
+    } else if (choice_payment == sub_menu.sub_menu_return) {
+      break;
     } else {
       cout << "\nPlease input a correct choice.";
       continue;
@@ -1018,7 +1216,7 @@ int delete_payment_record() {
 int login_menu(bool isUnitTesting) {
   string user_name;
   string password;
-  string user_file = "user.bin";
+  string user_file = "user";
   cout << "\nPlease enter your username:";
   cin >> user_name;
   cout << "\nPlease enter your password:";
@@ -1054,7 +1252,7 @@ int register_menu() {
   string user_name;
   string password;
   string recovery_key;
-  string user_file = "user.bin";
+  string user_file = "user";
   char warning;
   cout << "Please enter your new username:";
   cin >> user_name;
@@ -1083,7 +1281,7 @@ int register_menu() {
 int change_password_menu() {
   string password;
   string recovery_key;
-  string user_file = "user.bin";
+  string user_file = "user";
   cout << "Please enter your recovery key:";
   cin >> recovery_key;
   cout << "\nPlease enter your new password:";
