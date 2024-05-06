@@ -183,7 +183,7 @@ Node *readTreeFromFile(ifstream &inFile) {
   char marker;
 
   if (!(inFile >> marker)) {
-    cerr << "End of file reached!" << endl;
+    cout << "End of file reached!" << endl;
     return nullptr;
   }
 
@@ -215,7 +215,7 @@ Node *readTreeFromFile(ifstream &inFile) {
     internalNode->right = readTreeFromFile(inFile);
     return internalNode;
   } else {
-    cerr << "Invalid marker in file!" << endl;
+    cout << "Invalid marker in file!" << endl;
     return nullptr;
   }
 }
