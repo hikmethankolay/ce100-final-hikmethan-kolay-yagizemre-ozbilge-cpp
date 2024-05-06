@@ -40,7 +40,7 @@ struct classRecord {
   string date;
   string startingHour;
   string finishingHour;
-  int studentList[100];
+  string studentList;
 };
 
 struct paymentRecord {

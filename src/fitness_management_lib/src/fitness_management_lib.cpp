@@ -750,7 +750,7 @@ int add_member_record() {
                   << " / First registration date:" << member.firstRegistrationDate;
   string result = formattedRecord.str();
   FILE *myFile;
-  myFile = fopen("member_records.bin", "rb");
+  myFile = fopen("member_records", "rb");
 
   if (myFile == NULL) {
     file_write("member_records", result);
@@ -1006,14 +1006,14 @@ int add_class_record() {
   cout << "\nPlease enter finishing hour";
   cin >> classRecord.finishingHour;
   cout << "\nPlease enter student list";
-  cin >> classRecord.studentList[100];
+  cin >> classRecord.studentList;
   // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "Tutor:" << classRecord.tutor
                   << " / Class date:" << classRecord.date
                   << " / Starting Hour:" << classRecord.startingHour
                   << " / Finishing Hour:" << classRecord.finishingHour
-                  << " / Student List:" << classRecord.studentList[100];
+                  << " / Student List:" << classRecord.studentList;
   string result = formattedRecord.str();
   FILE *myFile;
   myFile = fopen("class_records", "rb");
