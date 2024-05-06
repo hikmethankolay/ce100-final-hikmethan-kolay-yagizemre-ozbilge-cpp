@@ -192,9 +192,11 @@ Node *readTreeFromFile(ifstream &inFile) {
     int freq;
     inFile >> data; // Read data
 
-    if (data == '\\' && inFile.peek() == 'n') {
-      inFile.ignore(); // Ignore the 'n' character
-      data = '\n'; // Replace with newline character
+    if (data == '\\' && (inFile.peek() == 'n' || inFile.peek() == '\n')) {
+      if (inFile.peek() == 'n') {
+        inFile.ignore(); // Ignore the 'n' character
+        data = '\n'; // Replace with newline character
+      }
     }
 
     inFile.ignore(1, '|'); // Ignore the delimiter
