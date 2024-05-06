@@ -84,7 +84,10 @@ struct Compare {
    * @return true if frequency of 'a' is less than frequency of 'b', else false.
    */
   bool operator()(Node *a, Node *b) {
-    return a->freq < b->freq;
+    if (a->freq == b->freq)
+      return a->data > b->data; // If frequencies are equal, order by character
+
+    return a->freq > b->freq;
   }
 };
 

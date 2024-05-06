@@ -87,6 +87,7 @@ Node *buildHuffmanTree(const unordered_map<char, int> &freqMap) {
   return pq.top();
 }
 
+
 /**
  * @brief Traverses the Huffman tree and builds the codewords.
  *
@@ -142,7 +143,7 @@ string decode(const string &encodedText, Node *root) {
       current = current->right;
     }
 
-    if (current->data != '$') {
+    if (current->left == nullptr && current->right == nullptr) {
       decodedText += current->data;
       current = root; // Reset current to root for next character
     }
@@ -158,20 +159,20 @@ string decode(const string &encodedText, Node *root) {
  * @param node Current node being written.
  */
 void writeTreeToFile(ofstream &outFile, Node *node) {
-  if (node == nullptr) {
-    outFile << "N"; // Mark as null
-    return;
-  }
-
   if (node->left == nullptr && node->right == nullptr) {
-    outFile << "L" << node->data << "|" << node->freq; // L for leaf, followed by data and frequency
+    char data = node->data;
+
+    if (data == '\n') {
+      outFile << "L" << "\\n" << "|" << node->freq; // Special handling for newline character
+    } else {
+      outFile << "L" << data << "|" << node->freq;
+    }
   } else {
-    outFile << "I" << node->data << "|" << node->freq; // I for internal, followed by data and frequency
+    outFile << "I" << node->data << "|" << node->freq;
     writeTreeToFile(outFile, node->left);
     writeTreeToFile(outFile, node->right);
   }
 }
-
 /**
  * @brief Reads the Huffman tree from a file.
  *
@@ -180,14 +181,25 @@ void writeTreeToFile(ofstream &outFile, Node *node) {
  */
 Node *readTreeFromFile(ifstream &inFile) {
   char marker;
-  inFile.get(marker);
 
-  if (marker == 'N') {
-    return nullptr; // Null node marker
-  } else if (marker == 'L') {
+  if (!(inFile >> marker)) {
+    cerr << "End of file reached!" << endl;
+    return nullptr;
+  }
+
+  cout << "Marker: " << marker << endl; // Print marker for debugging
+
+  if (marker == 'L') {
     char data;
     int freq;
     inFile >> data; // Read data
+
+    if (data == '\\' && inFile.peek() == 'n') {
+      inFile.ignore(); // Ignore the escape character
+      inFile.ignore(); // Ignore 'n'
+      data = '\n'; // Replace with newline character
+    }
+
     inFile.ignore(1, '|'); // Ignore the delimiter
     inFile >> freq; // Read frequency
     Node *leafNode = new Node(data, freq);
@@ -209,6 +221,7 @@ Node *readTreeFromFile(ifstream &inFile) {
 }
 
 
+
 /**
  * @brief Opens a binary file, deletes all of its content, and writes given text to it.
  *
@@ -218,6 +231,7 @@ Node *readTreeFromFile(ifstream &inFile) {
  */
 int file_write(string file_name, string text) {
   text = "0-)" + text + "\n";
+  //text = "0-)" + text;
   unordered_map<char, int> freqMap = calculateFrequency(text);
   Node *root = buildHuffmanTree(freqMap);
   unordered_map<char, string> codes;
@@ -225,8 +239,12 @@ int file_write(string file_name, string text) {
   string encodedText = encode(text, codes);
   // Open the binary file for writing
   ofstream outFile(file_name + ".bin", ios::binary);
-  // Write the encoded text to the binary file
-  outFile.write(encodedText.c_str(), encodedText.length());
+
+  // Write the encoded binary data to the binary file
+  for (char i : encodedText) {
+    outFile.write(&i, sizeof(char));
+  }
+
   outFile.close(); // Close the file
   // Open the Huffman file for writing
   ofstream outFileHuffman(file_name + "_huffman.bin", ios::binary);
