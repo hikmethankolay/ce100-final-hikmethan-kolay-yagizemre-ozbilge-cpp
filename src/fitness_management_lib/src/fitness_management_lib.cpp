@@ -230,8 +230,8 @@ Node *readTreeFromFile(ifstream &inFile) {
  * @return 0 on success.
  */
 int file_write(string file_name, string text) {
-  text = "0-)" + text + "\n";
-  //text = "0-)" + text;
+  //text = "0-)" + text + "\n";
+  text = "0-)" + text;
   unordered_map<char, int> freqMap = calculateFrequency(text);
   Node *root = buildHuffmanTree(freqMap);
   unordered_map<char, string> codes;
@@ -271,7 +271,7 @@ string file_read(string file_name, const char print_to_console) {
 
   // Get the size of the file
   myFile.seekg(0, ios::end);
-  int fileSize = myFile.tellg();
+  streamoff fileSize = myFile.tellg();
   myFile.seekg(0, ios::beg);
   // Read the entire file into a string
   string content(fileSize, '\0');

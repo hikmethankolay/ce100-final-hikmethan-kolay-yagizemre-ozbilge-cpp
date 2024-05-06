@@ -19,7 +19,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure
-
+/*
 int main() {
   struct login_menu_variables login_menu_choice;
 
@@ -55,5 +55,13 @@ int main() {
     }
   }
 
+  return 0;
+}
+*/
+
+int main() {
+  string text = "aaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccdaaaabbbccd";
+  file_write("test", text);
+  file_read("test", 'Y');
   return 0;
 }
