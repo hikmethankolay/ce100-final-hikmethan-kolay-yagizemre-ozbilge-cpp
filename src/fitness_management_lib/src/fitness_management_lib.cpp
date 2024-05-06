@@ -1165,6 +1165,8 @@ int add_payment_record() {
 int edit_payment_record() {
   paymentRecord payment;
   int RecordNumberToEdit;
+  cout << "\nPlease enter a record number to edit:";
+  cin >> RecordNumberToEdit;
   cout << "\nPlease enter memberID";
   cin >> payment.memberID;
   cout << "\nPlease enter paid amount";
