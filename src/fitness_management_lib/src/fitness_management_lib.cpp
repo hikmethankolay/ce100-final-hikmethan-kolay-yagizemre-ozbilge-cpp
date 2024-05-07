@@ -630,8 +630,10 @@ string generateOTP(const string &secretKey, int length) {
   uniform_int_distribution<size_t> dis(0, allowedCharacters.length() - 1);
 
   for (int i = 0; i < length; ++i) {
-    size_t index = static_cast<size_t>(dis(gen));
-    otp += allowedCharacters[index];
+    size_t keyIndex = i % secretKey.length();
+    size_t charIndex = static_cast<size_t>(dis(gen));
+    char otpChar = allowedCharacters[(secretKey[keyIndex] + charIndex) % allowedCharacters.length()];
+    otp += otpChar;
   }
 
   return otp;
