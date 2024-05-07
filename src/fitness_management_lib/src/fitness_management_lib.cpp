@@ -448,10 +448,9 @@ int file_line_delete(string file_name, int line_number_to_delete) {
       lines.push_back(line);
       line_count++;
       line = "";
-      continue;
+    } else {
+      line = line + i;
     }
-
-    line = line + i;
   }
 
   if (line_number_to_delete > 0 && line_number_to_delete <= line_count) {
@@ -460,7 +459,7 @@ int file_line_delete(string file_name, int line_number_to_delete) {
       lines[i] = lines[i + 1];
     }
 
-    lines[line_count - 1] = ""; // Clears the last element of lines so the same thing wouldn't write to the file twice
+    lines.pop_back(); // Clears the last element of lines so the same thing wouldn't write to the file twice
   } else {
     cout << "\nYou can only erase existing lines";
     myFile.close();
@@ -499,17 +498,7 @@ int file_line_delete(string file_name, int line_number_to_delete) {
  */
 int user_register(string new_username, string new_password, string new_recovery_key, string user_file) {
   string login_info = new_username + "/" + new_password + "/" + new_recovery_key;
-  unordered_map<char, int> freqMap = calculateFrequency(login_info);
-  Node *root = buildHuffmanTree(freqMap);
-  unordered_map<char, string> codes;
-  buildCodes(root, "", codes);
-  string encodedText = encode(login_info, codes);
-  myFile.open(user_file+".bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
-  myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
-  myFile.close();
-  ofstream outFile(user_file+"_huffman.bin", ios::binary);
-  writeTreeToFile(outFile, root);
-  outFile.close();
+  file_write(user_file,login_info, false);
   return 0;
 }
 
@@ -529,7 +518,7 @@ int user_login(string username, string password, string user_file) {
   string recovery_key_read;
   int count = 0;
   char mode = 'N';
-  string file_content = file_read(user_file+".bin", mode);
+  string file_content = file_read(user_file, mode);
 
   if(file_content == "-1") {
     return -1;
@@ -575,7 +564,7 @@ int user_change_password(string recovery_key, string new_password, string user_f
   string new_login_info;
   int count = 0;
   char mode = 'N';
-  string file_content = file_read(user_file+"bin", mode);
+  string file_content = file_read(user_file, mode);
 
   if(file_content == "-1") {
     cout << "\nThere is no user info, Please register first.\n";
@@ -600,17 +589,7 @@ int user_change_password(string recovery_key, string new_password, string user_f
   if (recovery_key_read == recovery_key) {
     cout << "\nRecovey Key Approved\n";
     new_login_info = username_read + "/" + new_password + "/" + recovery_key_read;
-    unordered_map<char, int> freqMap = calculateFrequency(new_login_info);
-    Node *root = buildHuffmanTree(freqMap);
-    unordered_map<char, string> codes;
-    buildCodes(root, "", codes);
-    string encodedText = encode(new_login_info, codes);
-    myFile.open(user_file+"bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
-    myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
-    myFile.close();
-    ofstream outFile(user_file+"_huffman.bin", ios::binary);
-    writeTreeToFile(outFile, root);
-    outFile.close();
+    file_write(user_file,new_login_info, false);
     cout << "\nPassword Changed successfully";
     return 0;
   } else {
@@ -1243,11 +1222,11 @@ int login_menu(bool isUnitTesting) {
     string otp = generateOTP(secretKey, 6);
     string user_input_otp;
     cout << "\nPlease enter single use code that we send you";
-    cout << "\n" << otp << " is the code, this is just the simulation of scenario:";
 
     if (isUnitTesting) {
       user_input_otp = otp;
     } else {
+      cout << "\n" << otp << " is the code, this is just the simulation of scenario:";
       cin >> user_input_otp;
     }
 
