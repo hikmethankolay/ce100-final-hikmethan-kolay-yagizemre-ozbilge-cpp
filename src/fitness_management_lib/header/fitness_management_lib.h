@@ -183,14 +183,14 @@ struct sub_menu_variables {
 };
 
 /**
- * @brief Opens a binary file, deletes all of its content and write given text to it.
- *
+ * @brief Opens a binary file, deletes all of its content, and writes given text to it.
  *
  * @param file_name The name of the file to write.
  * @param text The text to write.
+ * @param isFileNew check if a file new. if file is new it put "1-)" at start and "\n" at end
  * @return 0 on success.
  */
-int file_write(string file_name, string text);
+int file_write(string file_name, string text, bool isFileNew);
 
 /**
  * @brief Opens a binary file, reads all of its content, separates lines with "\n", and writes them to console. Also returns the contents of the file as a string for unit tests.

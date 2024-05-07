@@ -32,7 +32,7 @@ int main() {
     printf("5-)Exit\n");
     printf("Please enter a choice:");
     int choice_login_menu;
-    scanf("%d", &choice_login_menu);
+    cin >> choice_login_menu;
 
     if (choice_login_menu == login_menu_choice.login_menu_login) {
       login_menu(false);

@@ -238,11 +238,14 @@ Node *readTreeFromFile(ifstream &inFile) {
  *
  * @param file_name The name of the file to write.
  * @param text The text to write.
+ * @param isFileNew check if a file new. if file is new it put "1-)" at start and "\n" at end
  * @return 0 on success.
  */
-int file_write(string file_name, string text) {
-  //text = "0-)" + text + "\n";
-  text = "0-)" + text;
+int file_write(string file_name, string text, bool isFileNew) {
+  if (isFileNew) {
+    text = "1-)" + text + "\n";
+  }
+
   unordered_map<char, int> freqMap = calculateFrequency(text);
   Node *root = buildHuffmanTree(freqMap);
   unordered_map<char, string> codes;
@@ -364,7 +367,7 @@ int file_append(string file_name, string text) {
   int lineNumber = stoi(lastLine.substr(0, pos)) + 1; // Finds the number for the appended line
   text = to_string(lineNumber) + "-)" + text + "\n";
   file_content += text;
-  file_write(file_name,file_content);
+  file_write(file_name,file_content, false);
   return 0;
 }
 
@@ -402,7 +405,7 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
   }
 
   if (line_number_to_edit > 0 && line_number_to_edit <= line_count) {
-    lines[line_number_to_edit] = to_string(line_number_to_edit) + "-)" + new_line + "\n"; // Changes a member of Lines array to a new line with its line number
+    lines[line_number_to_edit-1] = to_string(line_number_to_edit) + "-)" + new_line + "\n"; // Changes a member of Lines array to a new line with its line number
   } else {
     cout << "\nYou can only edit existing lines";
     return -1;
@@ -414,7 +417,7 @@ int file_edit(string file_name, int line_number_to_edit, string new_line) {
     new_file_content += i;
   }
 
-  file_write(file_name, new_file_content);
+  file_write(file_name, new_file_content, false);
   cout << "\nData successfully edited";
   return 0;
 }
@@ -451,9 +454,9 @@ int file_line_delete(string file_name, int line_number_to_delete) {
     line = line + i;
   }
 
-  if (line_number_to_delete > 0 && line_number_to_delete < line_count) {
+  if (line_number_to_delete > 0 && line_number_to_delete <= line_count) {
     // Shift elements to "erase" the line at line_number_to_delete
-    for (int i = line_number_to_delete; i < line_count - 1; ++i) {
+    for (int i = line_number_to_delete - 1; i < line_count - 1; ++i) {
       lines[i] = lines[i + 1];
     }
 
@@ -478,7 +481,7 @@ int file_line_delete(string file_name, int line_number_to_delete) {
     }
   }
 
-  file_write(file_name, new_file_content);
+  file_write(file_name, new_file_content, false);
   cout << "\nData successfully deleted";
   return 0;
 }
@@ -501,10 +504,10 @@ int user_register(string new_username, string new_password, string new_recovery_
   unordered_map<char, string> codes;
   buildCodes(root, "", codes);
   string encodedText = encode(login_info, codes);
-  myFile.open("user.bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
+  myFile.open(user_file+".bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
   myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
   myFile.close();
-  ofstream outFile("user_huffman.bin", ios::binary);
+  ofstream outFile(user_file+"_huffman.bin", ios::binary);
   writeTreeToFile(outFile, root);
   outFile.close();
   return 0;
@@ -526,7 +529,7 @@ int user_login(string username, string password, string user_file) {
   string recovery_key_read;
   int count = 0;
   char mode = 'N';
-  string file_content = file_read(user_file, mode);
+  string file_content = file_read(user_file+".bin", mode);
 
   if(file_content == "-1") {
     return -1;
@@ -572,7 +575,7 @@ int user_change_password(string recovery_key, string new_password, string user_f
   string new_login_info;
   int count = 0;
   char mode = 'N';
-  string file_content = file_read(user_file, mode);
+  string file_content = file_read(user_file+"bin", mode);
 
   if(file_content == "-1") {
     cout << "\nThere is no user info, Please register first.\n";
@@ -602,10 +605,10 @@ int user_change_password(string recovery_key, string new_password, string user_f
     unordered_map<char, string> codes;
     buildCodes(root, "", codes);
     string encodedText = encode(new_login_info, codes);
-    myFile.open("user.bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
+    myFile.open(user_file+"bin", ios::out | ios::binary | ios::trunc); // Opens file with output tag
     myFile.write(encodedText.c_str(), encodedText.length()); // Deletes everything inside file and writes text variable
     myFile.close();
-    ofstream outFile("user_huffman.bin", ios::binary);
+    ofstream outFile(user_file+"_huffman.bin", ios::binary);
     writeTreeToFile(outFile, root);
     outFile.close();
     cout << "\nPassword Changed successfully";
@@ -764,7 +767,7 @@ int add_member_record() {
   myFile = fopen("member_records", "rb");
 
   if (myFile == NULL) {
-    file_write("member_records", result);
+    file_write("member_records", result, true);
     return 0;
   } else {
     fclose(myFile);
@@ -897,7 +900,7 @@ int add_subs_record() {
   myFile = fopen("subscription_records.bin", "rb");
 
   if (myFile == NULL) {
-    file_write("subscription_records", result);
+    file_write("subscription_records", result, true);
     return 0;
   } else {
     fclose(myFile);
@@ -1030,7 +1033,7 @@ int add_class_record() {
   myFile = fopen("class_records", "rb");
 
   if (myFile == NULL) {
-    file_write("class_records", result);
+    file_write("class_records", result, true);
     return 0;
   } else {
     fclose(myFile);
@@ -1162,7 +1165,7 @@ int add_payment_record() {
   myFile = fopen("payment_records", "rb");
 
   if (myFile == NULL) {
-    file_write("payment_records", result);
+    file_write("payment_records", result, true);
     return 0;
   } else {
     fclose(myFile);
@@ -1275,7 +1278,7 @@ int register_menu() {
   cin >> recovery_key;
   cout << "\n------------WARNING------------";
   cout << "\nThis process will delete all previous records, do you still wish to proceed?[Y/n]:";
-  scanf(" %c", &warning);
+  cin >> warning;
 
   if (warning == 'Y') {
     user_register(user_name,password,recovery_key,user_file);

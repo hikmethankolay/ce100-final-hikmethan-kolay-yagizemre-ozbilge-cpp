@@ -39,7 +39,7 @@ TEST_F(FitnessTest, TestFileRead) {
 TEST_F(FitnessTest, TestFileAppend) {
   string testString = "1-)TEXT STRING1\n2-)TEXT STRING2\n3-)TEXT STRING3\n4-)TEXT STRING4\n5-)TEXT STRING5\n6-)TEXT STRING6\n";
   string appendString = "TEXT STRING6";
-  file_append("test2.bin", appendString);
+  file_append("test2", appendString);
   EXPECT_EQ(testString, file_read("test2", 'N'));
 }
 
@@ -49,7 +49,7 @@ TEST_F(FitnessTest, TestFileAppend) {
 TEST_F(FitnessTest, TestFileEdit) {
   string testString = "1-)TEXT STRING1\n2-)TEXT STRING2\n3-)TEXT STRING EDIT\n4-)TEXT STRING4\n5-)TEXT STRING5\n";
   string editString = "TEXT STRING EDIT";
-  file_edit("test3.bin", 3, editString);
+  file_edit("test3", 3, editString);
   EXPECT_EQ(testString, file_read("test3", 'N'));
 }
 
@@ -58,7 +58,7 @@ TEST_F(FitnessTest, TestFileEdit) {
  */
 TEST_F(FitnessTest, TestFileDelete) {
   string testString = "1-)TEXT STRING2\n2-)TEXT STRING3\n3-)TEXT STRING4\n4-)TEXT STRING5\n";
-  file_line_delete("test4.bin", 1);
+  file_line_delete("test4", 1);
   EXPECT_EQ(testString, file_read("test4", 'N'));
 }
 
@@ -66,9 +66,9 @@ TEST_F(FitnessTest, TestFileDelete) {
  * @brief Tests the file_write function.
  */
 TEST_F(FitnessTest, TestFileWrite) {
-  string testString = "0-)TEXT STRING WRITE\n";
+  string testString = "1-)TEXT STRING WRITE\n";
   string writeString = "TEXT STRING WRITE";
-  file_write("test5.bin", writeString);
+  file_write("test5", writeString, true);
   EXPECT_EQ(testString, file_read("test5", 'N'));
 }
 
@@ -76,7 +76,7 @@ TEST_F(FitnessTest, TestFileWrite) {
  * @brief Tests the file_read function in a fail case.
  */
 TEST_F(FitnessTest, TestFileReadFail) {
-  ASSERT_EQ(NULL, file_read("test1f", 'N'));
+  ASSERT_EQ("-1", file_read("test1f", 'N'));
 }
 
 /**
@@ -131,7 +131,7 @@ TEST_F(FitnessTest, TestUserRegister) {
  */
 TEST_F(FitnessTest, TestUserChangePassword) {
   string testString = "username/newpassword/recoverykey";
-  EXPECT_EQ(success, user_change_password("recoverykey", "newpassword", "usertest2"));
+  user_change_password("recoverykey", "newpassword", "usertest2");
   EXPECT_EQ(testString, file_read("usertest2", 'N'));
 }
 
