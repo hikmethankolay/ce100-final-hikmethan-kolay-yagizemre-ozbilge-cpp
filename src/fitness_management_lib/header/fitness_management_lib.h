@@ -292,6 +292,14 @@ string generateSecretKey();
 string generateOTP(const string &secretKey, int length);
 
 /**
+ * @brief Compute the SHA-1 hash of a given input string.
+ *
+ * @param input The input string to hash.
+ * @return The SHA-1 hash value as a hexadecimal string.
+ */
+string sha1(string &input);
+
+/**
  * @brief main menu.
  * @param isGuestMode a bool to check if user entered with guest mode.
  * @return 0.
