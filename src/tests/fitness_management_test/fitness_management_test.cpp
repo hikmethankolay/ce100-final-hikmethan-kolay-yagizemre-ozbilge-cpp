@@ -130,7 +130,7 @@ TEST_F(FitnessTest, TestUserRegister) {
  * @brief Tests the user_change_password function.
  */
 TEST_F(FitnessTest, TestUserChangePassword) {
-  string testString = "username/newpassword/recoverykey";
+  string testString = "249ba36000029bbe97499c03db5a9001f6b734ec/b09254de0dd15bd5e93518c4a951b5f1f2bad3c1/d0428bd530df11aa01dcc19bcf3890a62e161ac5";
   user_change_password("recoverykey", "newpassword", "usertest2");
   EXPECT_EQ(testString, file_read("usertest2", 'N'));
 }
@@ -202,6 +202,24 @@ TEST_F(FitnessTest, TestOTPUniqueness) {
   }
 
   EXPECT_EQ(otpSet.size(), numIterations);
+}
+
+/**
+ * @brief Tests the SHA1 function for same strings to look if they output same hexadecimel code.
+ */
+TEST_F(FitnessTest, TestSHA1) {
+  string testString = "TEST STRING";
+  string testString2 = "TEST STRING";
+  EXPECT_EQ(sha1(testString),SHA1(testString2));
+}
+
+/**
+ * @brief Tests the SHA1 function for diffirent strings to look if they output diffirent hexadecimel code.
+ */
+TEST_F(FitnessTest, TestSHA1Fail) {
+  string testString = "TEST STRING";
+  string testString2 = "test string";
+  EXPECT_NE(sha1(testString),SHA1(testString2));
 }
 
 /**
