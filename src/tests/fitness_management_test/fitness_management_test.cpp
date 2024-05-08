@@ -121,7 +121,7 @@ TEST_F(FitnessTest, TestFileDeleteFail_2) {
  * @brief Tests the user_register function.
  */
 TEST_F(FitnessTest, TestUserRegister) {
-  string testString = "username/password/recoverykey";
+  string testString = "249ba36000029bbe97499c03db5a9001f6b734ec/5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8/d0428bd530df11aa01dcc19bcf3890a62e161ac5";
   user_register("username", "password", "recoverykey", "usertest");
   EXPECT_EQ(testString, file_read("usertest", 'N'));
 }
