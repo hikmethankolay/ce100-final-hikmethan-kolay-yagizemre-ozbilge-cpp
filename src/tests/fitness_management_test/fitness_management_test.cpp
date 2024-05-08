@@ -210,7 +210,7 @@ TEST_F(FitnessTest, TestOTPUniqueness) {
 TEST_F(FitnessTest, TestSHA1) {
   string testString = "TEST STRING";
   string testString2 = "TEST STRING";
-  EXPECT_EQ(sha1(testString),SHA1(testString2));
+  EXPECT_EQ(sha1(testString),sha1(testString2));
 }
 
 /**
@@ -219,7 +219,7 @@ TEST_F(FitnessTest, TestSHA1) {
 TEST_F(FitnessTest, TestSHA1Fail) {
   string testString = "TEST STRING";
   string testString2 = "test string";
-  EXPECT_NE(sha1(testString),SHA1(testString2));
+  EXPECT_NE(sha1(testString),sha1(testString2));
 }
 
 /**
