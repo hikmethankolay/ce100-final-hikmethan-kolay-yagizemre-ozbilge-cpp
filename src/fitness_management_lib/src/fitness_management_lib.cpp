@@ -257,7 +257,7 @@ string LCS(const string &text1, const string &text2) {
   }
 
   // Reconstruct the LCS from dp table
-  int i = m, j = n;
+  size_t i = m, j = n;
   string lcs;
 
   while (i > 0 && j > 0) {
