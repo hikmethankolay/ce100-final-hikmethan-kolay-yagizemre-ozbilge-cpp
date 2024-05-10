@@ -240,8 +240,8 @@ Node *readTreeFromFile(ifstream &inFile) {
  * @return The longest common subsequence of the input strings.
  */
 string LCS(const string &text1, const string &text2) {
-  int m = text1.length();
-  int n = text2.length();
+  size_t m = text1.length();
+  size_t n = text2.length();
   // Create a 2D vector to store the length of the LCS for substrings of text1 and text2
   vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
 
@@ -321,8 +321,8 @@ int checkLCS(string text, string file_name) {
 
   for(string i: lines) {
     string recordLCS = LCS(i, text);
-    int m = text.length();
-    int n = recordLCS.length();
+    size_t m = text.length();
+    size_t n = recordLCS.length();
 
     if(n/m > 85/100) {
       return 0;
