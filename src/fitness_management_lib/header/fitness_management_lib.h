@@ -492,4 +492,25 @@ void writeTreeToFile(ofstream &outFile, Node *node);
  */
 Node *readTreeFromFile(ifstream &inFile);
 
+/**
+ * Finds the longest common subsequence (LCS) of two input strings.
+ *
+ *
+ * @param text1 The first input string.
+ * @param text2 The second input string.
+ * @return The longest common subsequence of the input strings.
+ */
+string LCS(const string &text1, const string &text2);
+
+/**
+ * finds if file have a record that have a high LCS with text
+ *
+ *
+ * @param text The input string.
+ * @param file_name The file name.
+ * @return 0 on success
+ * @return -1 on fail
+ */
+int checkLCS(string text, string file_name);
+
 #endif // FITNESS_MANAGEMENT_LIB_H

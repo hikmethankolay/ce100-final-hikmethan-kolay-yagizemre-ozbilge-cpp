@@ -231,7 +231,108 @@ Node *readTreeFromFile(ifstream &inFile) {
   }
 }
 
+/**
+ * Finds the longest common subsequence (LCS) of two input strings.
+ *
+ *
+ * @param text1 The first input string.
+ * @param text2 The second input string.
+ * @return The longest common subsequence of the input strings.
+ */
+string LCS(const string &text1, const string &text2) {
+  int m = text1.length();
+  int n = text2.length();
+  // Create a 2D vector to store the length of the LCS for substrings of text1 and text2
+  vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
 
+  // Fill the dp table using bottom-up dynamic programming approach
+  for (int i = 1; i <= m; ++i) {
+    for (int j = 1; j <= n; ++j) {
+      if (text1[i - 1] == text2[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1] + 1;
+      } else {
+        dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+  }
+
+  // Reconstruct the LCS from dp table
+  int i = m, j = n;
+  string lcs;
+
+  while (i > 0 && j > 0) {
+    if (text1[i - 1] == text2[j - 1]) {
+      lcs = text1[i - 1] + lcs;
+      --i;
+      --j;
+    } else if (dp[i - 1][j] > dp[i][j - 1]) {
+      --i;
+    } else {
+      --j;
+    }
+  }
+
+  return lcs;
+}
+
+/**
+ * finds if file have a record that have a high LCS with text
+ *
+ *
+ * @param text The input string.
+ * @param file_name The file name.
+ * @return 0 on success
+ * @return -1 on fail
+ */
+int checkLCS(string text, string file_name) {
+  ifstream myFile(file_name + ".bin", ios::binary);
+
+  if (!myFile.is_open()) {
+    cout << "File operation failed, There is no record" << endl;
+    return -1;
+  }
+
+  // Get the size of the file
+  myFile.seekg(0, ios::end);
+  streamoff fileSize = myFile.tellg();
+  myFile.seekg(0, ios::beg);
+  // Read the entire file into a string
+  string content(fileSize, '\0');
+  myFile.read(&content[0], fileSize);
+  myFile.close(); // Close the file
+  // Decode the content and return it
+  ifstream inFile;
+  inFile.open(file_name + "_huffman.bin", ios::binary);
+  Node *root = readTreeFromFile(inFile);
+  inFile.close();
+  string decodedText = decode(content, root);
+  vector<string> lines;
+  string line;
+
+  for(char i : decodedText) {
+    if (i == '\n') {
+      line = line + i;
+      lines.push_back(line);
+      line = "";
+    } else {
+      line = line + i;
+    }
+  }
+
+  for(string i: lines) {
+    string recordLCS = LCS(i, text);
+    int m = text.length();
+    int n = recordLCS.length();
+
+    if(n/m > 85/100) {
+      return 0;
+    } else {
+      continue;
+    }
+  }
+
+  return -1;
+}
 
 /**
  * @brief Opens a binary file, deletes all of its content, and writes given text to it.
@@ -851,6 +952,17 @@ int add_member_record() {
                   << " / Phone number:" << member.phoneNumber
                   << " / First registration date:" << member.firstRegistrationDate;
   string result = formattedRecord.str();
+
+  if (checkLCS(result,"member_records") == 0) {
+    char choice;
+    cout << "\nThere is a very similar record, Dou you wish to add new record anayway?[Y/n]";
+    cin >> choice;
+
+    if(choice != 'Y') {
+      return 0;
+    }
+  }
+
   FILE *myFile;
   myFile = fopen("member_records", "rb");
 
@@ -984,6 +1096,17 @@ int add_subs_record() {
                   << " / Finishing date:" << sub.finishingDate
                   << " / Subcription tier:" << sub.subscriptionTier;
   string result = formattedRecord.str();
+
+  if (checkLCS(result,"subscription_records") == 0) {
+    char choice;
+    cout << "\nThere is a very similar record, Dou you wish to add new record anayway?[Y/n]";
+    cin >> choice;
+
+    if(choice != 'Y') {
+      return 0;
+    }
+  }
+
   FILE *myFile;
   myFile = fopen("subscription_records.bin", "rb");
 
@@ -1117,6 +1240,17 @@ int add_class_record() {
                   << " / Finishing Hour:" << classRecord.finishingHour
                   << " / Student List:" << classRecord.studentList;
   string result = formattedRecord.str();
+
+  if (checkLCS(result,"class_records") == 0) {
+    char choice;
+    cout << "\nThere is a very similar record, Dou you wish to add new record anayway?[Y/n]";
+    cin >> choice;
+
+    if(choice != 'Y') {
+      return 0;
+    }
+  }
+
   FILE *myFile;
   myFile = fopen("class_records", "rb");
 
@@ -1249,6 +1383,17 @@ int add_payment_record() {
                   << " / Payment date:" << payment.paymentDate
                   << " / Next payment date:" << payment.nextPaymentDate;
   string result = formattedRecord.str();
+
+  if (checkLCS(result,"payment_records") == 0) {
+    char choice;
+    cout << "\nThere is a very similar record, Dou you wish to add new record anayway?[Y/n]";
+    cin >> choice;
+
+    if(choice != 'Y') {
+      return 0;
+    }
+  }
+
   FILE *myFile;
   myFile = fopen("payment_records", "rb");
 
