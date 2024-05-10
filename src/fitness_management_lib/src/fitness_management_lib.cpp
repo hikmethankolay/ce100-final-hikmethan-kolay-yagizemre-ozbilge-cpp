@@ -963,7 +963,7 @@ int add_member_record() {
   }
 
   FILE *myFile;
-  myFile = fopen("member_records", "rb");
+  myFile = fopen("member_records.bin", "rb");
 
   if (myFile == NULL) {
     file_write("member_records", result, true);
@@ -1251,7 +1251,7 @@ int add_class_record() {
   }
 
   FILE *myFile;
-  myFile = fopen("class_records", "rb");
+  myFile = fopen("class_records.bin", "rb");
 
   if (myFile == NULL) {
     file_write("class_records", result, true);
@@ -1394,7 +1394,7 @@ int add_payment_record() {
   }
 
   FILE *myFile;
-  myFile = fopen("payment_records", "rb");
+  myFile = fopen("payment_records.bin", "rb");
 
   if (myFile == NULL) {
     file_write("payment_records", result, true);
