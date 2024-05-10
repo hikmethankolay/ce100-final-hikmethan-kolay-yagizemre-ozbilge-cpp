@@ -223,6 +223,22 @@ TEST_F(FitnessTest, TestSHA1Fail) {
 }
 
 /**
+ * @brief Tests the checkLCS function for its success case
+ */
+TEST_F(FitnessTest, TestLCS) {
+  string testString = "3-)TEXT STRING3";
+  EXPECT_EQ(success, checkLCS("test1",testString));
+}
+
+/**
+ * @brief Tests the checkLCS function for its faill case
+ */
+TEST_F(FitnessTest, TestLCSFail) {
+  string testString = "TEXT";
+  EXPECT_EQ(fail, checkLCS("test1",testString));
+}
+
+/**
  * @brief Test for login menu
  */
 TEST_F(FitnessTest, TestLoginMenu) {

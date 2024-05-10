@@ -240,8 +240,8 @@ Node *readTreeFromFile(ifstream &inFile) {
  * @return The longest common subsequence of the input strings.
  */
 string LCS(const string &text1, const string &text2) {
-  size_t m = text1.length();
-  size_t n = text2.length();
+  int m = static_cast<int>(text1.length());
+  int n = static_cast<int>(text2.length());
   // Create a 2D vector to store the length of the LCS for substrings of text1 and text2
   vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
 
@@ -257,7 +257,7 @@ string LCS(const string &text1, const string &text2) {
   }
 
   // Reconstruct the LCS from dp table
-  size_t i = m, j = n;
+  int i = m, j = n;
   string lcs;
 
   while (i > 0 && j > 0) {
@@ -288,7 +288,6 @@ int checkLCS(string text, string file_name) {
   ifstream myFile(file_name + ".bin", ios::binary);
 
   if (!myFile.is_open()) {
-    cout << "File operation failed, There is no record" << endl;
     return -1;
   }
 
@@ -321,13 +320,13 @@ int checkLCS(string text, string file_name) {
 
   for(string i: lines) {
     string recordLCS = LCS(i, text);
-    size_t m = text.length();
-    size_t n = recordLCS.length();
+    int m = static_cast<int>(i.length());
+    int n = static_cast<int>(recordLCS.length());
+    double similarity = (static_cast<double>(n) / static_cast<double>(m))*100;
+    double limit = 85;
 
-    if(n/m > 85/100) {
+    if(similarity > limit) {
       return 0;
-    } else {
-      continue;
     }
   }
 
