@@ -325,7 +325,7 @@ int checkLCS(string text, string file_name) {
     double similarity = (static_cast<double>(n) / static_cast<double>(m))*100;
     double limit = 85;
 
-    if(similarity > limit) {
+    if(similarity >= limit) {
       return 0;
     }
   }

@@ -227,7 +227,7 @@ TEST_F(FitnessTest, TestSHA1Fail) {
  */
 TEST_F(FitnessTest, TestLCS) {
   string testString = "3-)TEXT STRING3";
-  EXPECT_EQ(success, checkLCS("test1",testString));
+  EXPECT_EQ(success, checkLCS(testString,"test1"));
 }
 
 /**
@@ -235,7 +235,7 @@ TEST_F(FitnessTest, TestLCS) {
  */
 TEST_F(FitnessTest, TestLCSFail) {
   string testString = "TEXT";
-  EXPECT_EQ(fail, checkLCS("test1",testString));
+  EXPECT_EQ(fail, checkLCS(testString,"test1"));
 }
 
 /**
