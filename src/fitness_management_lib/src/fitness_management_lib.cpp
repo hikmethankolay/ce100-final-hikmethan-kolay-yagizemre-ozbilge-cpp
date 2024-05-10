@@ -1501,8 +1501,8 @@ int register_menu() {
   string password;
   string recovery_key;
   string user_file = "user";
-  char warning;
-  cout << "Please enter your new username:";
+  string warning;
+  cout << "\nPlease enter your new username:";
   cin >> user_name;
   cout << "\nPlease enter your new password:";
   cin >> password;
@@ -1512,10 +1512,10 @@ int register_menu() {
   cout << "\nThis process will delete all previous records, do you still wish to proceed?[Y/n]:";
   cin >> warning;
 
-  if (warning == 'Y') {
+  if (warning == "Y") {
     user_register(user_name,password,recovery_key,user_file);
   } else {
-    cout << "Process terminated.";
+    cout << "\nProcess terminated.";
   }
 
   return 0;
@@ -1530,7 +1530,7 @@ int change_password_menu() {
   string password;
   string recovery_key;
   string user_file = "user";
-  cout << "Please enter your recovery key:";
+  cout << "\nPlease enter your recovery key:";
   cin >> recovery_key;
   cout << "\nPlease enter your new password:";
   cin >> password;

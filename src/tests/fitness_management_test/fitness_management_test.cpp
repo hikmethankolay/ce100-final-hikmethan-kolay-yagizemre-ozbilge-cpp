@@ -259,6 +259,66 @@ TEST_F(FitnessTest, TestLoginMenu) {
 }
 
 /**
+ * @brief Test for register menu
+ */
+TEST_F(FitnessTest, TestRegisterMenu) {
+  fflush(stdout);
+  freopen("register_menu_output_test.bin", "wb", stdout);
+  freopen("register_menu_input_test.bin", "rb", stdin);
+  register_menu();
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("register_menu_expected_output"), file_read_for_test("register_menu_output_test"));
+}
+
+/**
+ * @brief Test for Change password menu
+ */
+TEST_F(FitnessTest, TestChangePasswordMenu) {
+  fflush(stdout);
+  freopen("password_menu_output_test.bin", "wb", stdout);
+  freopen("password_menu_input_test.bin", "rb", stdin);
+  change_password_menu();
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("password_menu_expected_output"), file_read_for_test("password_menu_output_test"));
+}
+
+/**
+ * @brief Test for guest mode
+ */
+TEST_F(FitnessTest, TestGuestMode) {
+  fflush(stdout);
+  freopen("guest_menu_output_test.bin", "wb", stdout);
+  freopen("guest_menu_input_test.bin", "rb", stdin);
+  main_menu(true);
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("guest_menu_expected_output"), file_read_for_test("guest_menu_output_test"));
+}
+
+/**
  * @brief The main function of the test program.
  *
  * @param argc The number of command-line arguments.
