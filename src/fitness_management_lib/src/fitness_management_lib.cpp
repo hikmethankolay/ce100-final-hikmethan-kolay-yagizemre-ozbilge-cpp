@@ -857,7 +857,7 @@ int main_menu(bool isGuestMode) {
     cout << "\n1-)Member Management";
     cout << "\n2-)Subscription Tracking";
     cout << "\n3-)Class Management";
-    cout << "\n4-)Payemnt Processing";
+    cout << "\n4-)Payment Processing";
     cout << "\n5-)Log out";
     cout << "\nPlease enter a choice:";
     int choice_main_menu;
@@ -933,17 +933,16 @@ int member_menu(bool isGuestMode) {
  */
 int add_member_record() {
   memberRecord member;
-  cout << "\nPlease enter memberID:";
+  cout << "\nPlease enter memberID: ";
   cin >> member.memberID;
-  cout << "\nPlease enter full name:";
+  cout << "\nPlease enter full name: ";
   cin >> member.fullName;
-  cout << "\nPlease enter birth date:";
+  cout << "\nPlease enter birth date: ";
   cin >> member.birthDate;
-  cout << "\nPlease enter phone number:";
+  cout << "\nPlease enter phone number: ";
   cin >> member.phoneNumber;
-  cout << "\nPlease enter first registration date:";
+  cout << "\nPlease enter first registration date: ";
   cin >> member.firstRegistrationDate;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "MemberID:" << member.memberID
                   << " / Full name:" << member.fullName
@@ -984,19 +983,18 @@ int add_member_record() {
 int edit_member_record() {
   memberRecord member;
   int RecordNumberToEdit;
-  cout << "\nPlease enter record number to edit:";
+  cout << "\nPlease enter record number to edit: ";
   cin >> RecordNumberToEdit;
-  cout << "\nPlease enter memberID:";
+  cout << "\nPlease enter memberID: ";
   cin >> member.memberID;
-  cout << "\nPlease enter full name:";
+  cout << "\nPlease enter full name: ";
   cin >> member.fullName;
-  cout << "\nPlease enter birth date:";
+  cout << "\nPlease enter birth date: ";
   cin >> member.birthDate;
-  cout << "\nPlease enter phone number:";
+  cout << "\nPlease enter phone number: ";
   cin >> member.phoneNumber;
-  cout << "\nPlease enter first registration date:";
+  cout << "\nPlease enter first registration date: ";
   cin >> member.firstRegistrationDate;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "MemberID:" << member.memberID
                   << " / Full name:" << member.fullName
@@ -1088,7 +1086,6 @@ int add_subs_record() {
   cin >> sub.finishingDate;
   cout << "\nPlease enter subcription tier:";
   cin >> sub.subscriptionTier;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "MemberID:" << sub.memberID
                   << " / Starting date:" << sub.startingDate
@@ -1138,7 +1135,6 @@ int edit_subs_record() {
   cin >> sub.finishingDate;
   cout << "\nPlease enter subcription tier:";
   cin >> sub.subscriptionTier;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "MemberID:" << sub.memberID
                   << " / Starting date:" << sub.startingDate
@@ -1195,13 +1191,13 @@ int class_menu(bool isGuestMode) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
     } else if (choice_class == sub_menu.sub_menu_add) {
-      add_subs_record();
+      add_class_record();
       continue;
     } else if (choice_class == sub_menu.sub_menu_edit) {
-      edit_subs_record();
+      edit_class_record();
       continue;
     } else if (choice_class == sub_menu.sub_menu_delete) {
-      delete_subs_record();
+      delete_class_record();
       continue;
     } else if (choice_class == sub_menu.sub_menu_return) {
       break;
@@ -1221,17 +1217,16 @@ int class_menu(bool isGuestMode) {
  */
 int add_class_record() {
   classRecord classRecord;
-  cout << "\nPlease enter tutor";
+  cout << "\nPlease enter tutor: ";
   cin >> classRecord.tutor;
-  cout << "\nPlease enter date";
+  cout << "\nPlease enter date: ";
   cin >> classRecord.date;
-  cout << "\nPlease enter starting hour";
+  cout << "\nPlease enter starting hour: ";
   cin >> classRecord.startingHour;
-  cout << "\nPlease enter finishing hour";
+  cout << "\nPlease enter finishing hour: ";
   cin >> classRecord.finishingHour;
-  cout << "\nPlease enter student list";
+  cout << "\nPlease enter student list: ";
   cin >> classRecord.studentList;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "Tutor:" << classRecord.tutor
                   << " / Class date:" << classRecord.date
@@ -1271,25 +1266,24 @@ int add_class_record() {
 int edit_class_record() {
   classRecord classRecord;
   int RecordNumberToEdit;
-  cout << "\nPlease enter a record number to edit:";
+  cout << "\nPlease enter a record number to edit: ";
   cin >> RecordNumberToEdit;
-  cout << "\nPlease enter tutor";
+  cout << "\nPlease enter tutor: ";
   cin >> classRecord.tutor;
-  cout << "\nPlease enter date";
+  cout << "\nPlease enter date: ";
   cin >> classRecord.date;
-  cout << "\nPlease enter starting hour";
+  cout << "\nPlease enter starting hour: ";
   cin >> classRecord.startingHour;
-  cout << "\nPlease enter finishing hour";
+  cout << "\nPlease enter finishing hour: ";
   cin >> classRecord.finishingHour;
-  cout << "\nPlease enter student list";
-  cin >> classRecord.studentList[100];
-  // Format the string first
+  cout << "\nPlease enter student list: ";
+  cin >> classRecord.studentList;
   ostringstream formattedRecord;
   formattedRecord << "Tutor:" << classRecord.tutor
                   << " / Class date:" << classRecord.date
                   << " / Starting Hour:" << classRecord.startingHour
                   << " / Finishing Hour:" << classRecord.finishingHour
-                  << " / Student List:" << classRecord.studentList[100];
+                  << " / Student List:" << classRecord.studentList;
   string result = formattedRecord.str();
 
   if (file_edit("class_records", RecordNumberToEdit, result) == 0) {
@@ -1341,13 +1335,13 @@ int payment_menu(bool isGuestMode) {
       cout << "\nYou can only see records while in guest mode.";
       continue;
     } else if (choice_payment == sub_menu.sub_menu_add) {
-      add_subs_record();
+      add_payment_record();
       continue;
     } else if (choice_payment == sub_menu.sub_menu_edit) {
-      edit_subs_record();
+      edit_payment_record();
       continue;
     } else if (choice_payment == sub_menu.sub_menu_delete) {
-      delete_subs_record();
+      delete_payment_record();
       continue;
     } else if (choice_payment == sub_menu.sub_menu_return) {
       break;
@@ -1375,10 +1369,9 @@ int add_payment_record() {
   cin >> payment.paymentDate;
   cout << "\nPlease enter next payment date";
   cin >> payment.nextPaymentDate;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "MemberID:" << payment.memberID
-                  << " / Paid amount" << payment.paidAmount
+                  << " / Paid amount:" << payment.paidAmount
                   << " / Payment date:" << payment.paymentDate
                   << " / Next payment date:" << payment.nextPaymentDate;
   string result = formattedRecord.str();
@@ -1424,10 +1417,9 @@ int edit_payment_record() {
   cin >> payment.paymentDate;
   cout << "\nPlease enter next payment date";
   cin >> payment.nextPaymentDate;
-  // Format the string first
   ostringstream formattedRecord;
   formattedRecord << "MemberID:" << payment.memberID
-                  << " / Paid amount" << payment.paidAmount
+                  << " / Paid amount:" << payment.paidAmount
                   << " / Payment date:" << payment.paymentDate
                   << " / Next payment date:" << payment.nextPaymentDate;
   string result = formattedRecord.str();

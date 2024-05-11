@@ -19,7 +19,10 @@
 #include <sstream>
 #include <stdexcept>
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure
-
+/**
+ * @brief main entry point of app
+ *
+ */
 int main() {
   struct login_menu_variables login_menu_choice;
 

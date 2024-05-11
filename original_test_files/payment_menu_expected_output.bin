@@ -1,0 +1,64 @@
+
+--------Payments Menu--------
+1-)Show Payments
+2-)Add Payment
+3-)Edit Payments
+4-)Delete Payments
+7-)Return to Main Menu
+Please enter a choice:
+Please enter memberID
+Please enter paid amount
+Please enter payment date
+Please enter next payment date
+--------Payments Menu--------
+1-)Show Payments
+2-)Add Payment
+3-)Edit Payments
+4-)Delete Payments
+7-)Return to Main Menu
+Please enter a choice:
+Please enter memberID
+Please enter paid amount
+Please enter payment date
+Please enter next payment date
+There is a very similar record, Dou you wish to add new record anayway?[Y/n]
+--------Payments Menu--------
+1-)Show Payments
+2-)Add Payment
+3-)Edit Payments
+4-)Delete Payments
+7-)Return to Main Menu
+Please enter a choice:
+Please enter a record number to edit:
+Please enter memberID
+Please enter paid amount
+Please enter payment date
+Please enter next payment date
+Data successfully edited
+--------Payments Menu--------
+1-)Show Payments
+2-)Add Payment
+3-)Edit Payments
+4-)Delete Payments
+7-)Return to Main Menu
+Please enter a choice:
+--------------Payment Records--------------
+1-)MemberID:123456 / Paid amount:5000 / Payment date:10/12/2035 / Next payment date:10/12/2036
+2-)MemberID:123456 / Paid amount:5000 / Payment date:10/12/2035 / Next payment date:10/12/2038
+
+--------Payments Menu--------
+1-)Show Payments
+2-)Add Payment
+3-)Edit Payments
+4-)Delete Payments
+7-)Return to Main Menu
+Please enter a choice:
+Please enter record number to delete:
+Data successfully deleted
+--------Payments Menu--------
+1-)Show Payments
+2-)Add Payment
+3-)Edit Payments
+4-)Delete Payments
+7-)Return to Main Menu
+Please enter a choice:

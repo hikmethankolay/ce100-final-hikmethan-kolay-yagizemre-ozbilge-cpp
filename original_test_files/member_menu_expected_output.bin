@@ -1,0 +1,67 @@
+
+--------Memberships Menu--------
+1-)Show Memberships
+2-)Add Membership
+3-)Edit Memberships
+4-)Delete Memberships
+5-)Return to Main Menu
+Please enter a choice:
+Please enter memberID: 
+Please enter full name: 
+Please enter birth date: 
+Please enter phone number: 
+Please enter first registration date: 
+--------Memberships Menu--------
+1-)Show Memberships
+2-)Add Membership
+3-)Edit Memberships
+4-)Delete Memberships
+5-)Return to Main Menu
+Please enter a choice:
+Please enter memberID: 
+Please enter full name: 
+Please enter birth date: 
+Please enter phone number: 
+Please enter first registration date: 
+There is a very similar record, Dou you wish to add new record anayway?[Y/n]
+--------Memberships Menu--------
+1-)Show Memberships
+2-)Add Membership
+3-)Edit Memberships
+4-)Delete Memberships
+5-)Return to Main Menu
+Please enter a choice:
+Please enter record number to edit: 
+Please enter memberID: 
+Please enter full name: 
+Please enter birth date: 
+Please enter phone number: 
+Please enter first registration date: 
+Data successfully edited
+--------Memberships Menu--------
+1-)Show Memberships
+2-)Add Membership
+3-)Edit Memberships
+4-)Delete Memberships
+5-)Return to Main Menu
+Please enter a choice:
+--------------Membership Records--------------
+1-)MemberID:123456 / Full name:JhonSmith / Birth date:10/10/2002 / Phone number:05424645153 / First registration date:10/10/2035
+2-)MemberID:123456 / Full name:JhonSmith / Birth date:10/10/2005 / Phone number:05424645153 / First registration date:10/10/2038
+
+--------Memberships Menu--------
+1-)Show Memberships
+2-)Add Membership
+3-)Edit Memberships
+4-)Delete Memberships
+5-)Return to Main Menu
+Please enter a choice:
+Please enter record number to delete:
+Data successfully deleted
+--------Memberships Menu--------
+1-)Show Memberships
+2-)Add Membership
+3-)Edit Memberships
+4-)Delete Memberships
+5-)Return to Main Menu
+Please enter a choice:

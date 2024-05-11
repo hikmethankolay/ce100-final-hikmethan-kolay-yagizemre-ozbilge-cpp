@@ -3,7 +3,7 @@
 1-)Member Management
 2-)Subscription Tracking
 3-)Class Management
-4-)Payemnt Processing
+4-)Payment Processing
 5-)Log out
 Please enter a choice:
 --------Memberships Menu--------
@@ -33,7 +33,7 @@ Please enter a choice:
 1-)Member Management
 2-)Subscription Tracking
 3-)Class Management
-4-)Payemnt Processing
+4-)Payment Processing
 5-)Log out
 Please enter a choice:
 --------Subscriptions Menu--------
@@ -63,7 +63,7 @@ Please enter a choice:
 1-)Member Management
 2-)Subscription Tracking
 3-)Class Management
-4-)Payemnt Processing
+4-)Payment Processing
 5-)Log out
 Please enter a choice:
 --------Classes Menu--------
@@ -93,7 +93,7 @@ Please enter a choice:
 1-)Member Management
 2-)Subscription Tracking
 3-)Class Management
-4-)Payemnt Processing
+4-)Payment Processing
 5-)Log out
 Please enter a choice:
 --------Payments Menu--------
@@ -123,7 +123,7 @@ Please enter a choice:
 1-)Member Management
 2-)Subscription Tracking
 3-)Class Management
-4-)Payemnt Processing
+4-)Payment Processing
 5-)Log out
 Please enter a choice:
 Please input a correct choice.
@@ -131,6 +131,6 @@ Please input a correct choice.
 1-)Member Management
 2-)Subscription Tracking
 3-)Class Management
-4-)Payemnt Processing
+4-)Payment Processing
 5-)Log out
 Please enter a choice:

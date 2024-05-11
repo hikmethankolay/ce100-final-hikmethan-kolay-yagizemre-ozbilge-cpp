@@ -1,0 +1,64 @@
+
+--------Subscriptions Menu--------
+1-)Show Subscriptions
+2-)Add Subscription
+3-)Edit Subscriptions
+4-)Delete Subscriptions
+5-)Return to Main Menu
+Please enter a choice:
+Please enter memberID:
+Please enter starting date:
+Please enter finishing date:
+Please enter subcription tier:
+--------Subscriptions Menu--------
+1-)Show Subscriptions
+2-)Add Subscription
+3-)Edit Subscriptions
+4-)Delete Subscriptions
+5-)Return to Main Menu
+Please enter a choice:
+Please enter memberID:
+Please enter starting date:
+Please enter finishing date:
+Please enter subcription tier:
+There is a very similar record, Dou you wish to add new record anayway?[Y/n]
+--------Subscriptions Menu--------
+1-)Show Subscriptions
+2-)Add Subscription
+3-)Edit Subscriptions
+4-)Delete Subscriptions
+5-)Return to Main Menu
+Please enter a choice:
+Please enter record number to edit:
+Please enter memberID:
+Please enter starting date:
+Please enter finishing date:
+Please enter subcription tier:
+Data successfully edited
+--------Subscriptions Menu--------
+1-)Show Subscriptions
+2-)Add Subscription
+3-)Edit Subscriptions
+4-)Delete Subscriptions
+5-)Return to Main Menu
+Please enter a choice:
+--------------Membership Records--------------
+1-)MemberID:123456 / Starting date:10/12/2035 / Finishing date:10/12/2036 / Subcription tier:A+
+2-)MemberID:123456 / Starting date:10/12/2038 / Finishing date:10/6/2039 / Subcription tier:A+
+
+--------Subscriptions Menu--------
+1-)Show Subscriptions
+2-)Add Subscription
+3-)Edit Subscriptions
+4-)Delete Subscriptions
+5-)Return to Main Menu
+Please enter a choice:
+Please enter record number to delete:
+Data successfully deleted
+--------Subscriptions Menu--------
+1-)Show Subscriptions
+2-)Add Subscription
+3-)Edit Subscriptions
+4-)Delete Subscriptions
+5-)Return to Main Menu
+Please enter a choice:

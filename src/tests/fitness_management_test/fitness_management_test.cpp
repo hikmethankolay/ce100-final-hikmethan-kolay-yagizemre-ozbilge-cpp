@@ -319,6 +319,83 @@ TEST_F(FitnessTest, TestGuestMode) {
 }
 
 /**
+ * @brief Test for member menu
+ */
+TEST_F(FitnessTest, TestMemberMenu) {
+  fflush(stdout);
+  freopen("member_menu_output_test.bin", "wb", stdout);
+  freopen("member_menu_input_test.bin", "rb", stdin);
+  member_menu(false);
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("member_menu_expected_output"), file_read_for_test("member_menu_output_test"));
+}
+
+/**
+ * @brief Test for subs menu
+ */
+TEST_F(FitnessTest, TestSubsMenu) {
+  fflush(stdout);
+  freopen("subs_menu_output_test.bin", "wb", stdout);
+  freopen("subs_menu_input_test.bin", "rb", stdin);
+  subs_menu(false);
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("subs_menu_expected_output"), file_read_for_test("subs_menu_output_test"));
+}
+
+/**
+ * @brief Test for class menu
+*/
+TEST_F(FitnessTest, TestClassMenu) {
+  freopen("class_menu_output_test.bin", "wb", stdout);
+  freopen("class_menu_input_test.bin", "rb", stdin);
+  class_menu(false);
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("class_menu_expected_output"), file_read_for_test("class_menu_output_test"));
+}
+
+/**
+ * @brief Test for payment menu
+ */
+TEST_F(FitnessTest, TestPaymentMenu) {
+  fflush(stdout);
+  freopen("payment_menu_output_test.bin", "wb", stdout);
+  freopen("payment_menu_input_test.bin", "rb", stdin);
+  payment_menu(false);
+#ifdef _WIN32
+  freopen("CON", "w", stdout);
+  fflush(stdout);
+  freopen("CON", "r", stdin);
+#else
+  freopen("/dev/tty", "w", stdout);
+  fflush(stdout);
+  freopen("/dev/tty", "r", stdin);
+#endif
+  EXPECT_EQ(file_read_for_test("payment_menu_expected_output"), file_read_for_test("payment_menu_output_test"));
+}
+
+/**
  * @brief The main function of the test program.
  *
  * @param argc The number of command-line arguments.

@@ -17,36 +17,121 @@
  *
  */
 using namespace std;
-
+/**
+* @brief memberRecord
+*
+*/
 struct memberRecord {
+
+  /**
+  * @brief memberID
+  *
+  */
   int memberID;
+  /**
+  * @brief fullName
+  *
+  */
   string fullName;
+  /**
+  * @brief birthDate
+  *
+  */
   string birthDate;
+  /**
+  * @brief phoneNumber
+  *
+  */
   string phoneNumber;
+  /**
+  * @brief firstRegistrationDate
+  *
+  */
   string firstRegistrationDate;
 
 };
-
+/**
+* @brief subsciprtionRecord
+*
+*/
 struct subsciprtionRecord {
+  /**
+  * @brief memberID
+  *
+  */
   int memberID;
+  /**
+  * @brief startingDate
+  *
+  */
   string startingDate;
+  /**
+  * @brief finishingDate
+  *
+  */
   string finishingDate;
+  /**
+  * @brief subscriptionTier
+  *
+  */
   string subscriptionTier;
 
 };
-
+/**
+* @brief memberID
+*
+*/
 struct classRecord {
+  /**
+  * @brief tutor
+  *
+  */
   string tutor;
+  /**
+  * @brief date
+  *
+  */
   string date;
+  /**
+  * @brief startingHour
+  *
+  */
   string startingHour;
+  /**
+  * @brief finishingHour
+  *
+  */
   string finishingHour;
+  /**
+  * @brief studentList
+  *
+  */
   string studentList;
 };
-
+/**
+* @brief paymentRecord
+*
+*/
 struct paymentRecord {
+  /**
+  * @brief memberID
+  *
+  */
   int memberID;
+  /**
+  * @brief paidAmount
+  *
+  */
   int paidAmount;
+  /**
+  * @brief paymentDate
+  *
+  */
   string paymentDate;
+  /**
+  * @brief nextPaymentDate
+  *
+  */
   string nextPaymentDate;
 
 };
@@ -57,8 +142,20 @@ struct paymentRecord {
  *
 */
 struct Node {
-  char data; // Character
-  int freq; // Frequency
+  /**
+  * @brief data
+  *
+  */
+  char data;
+  /**
+  * @brief freq
+  *
+  */
+  int freq;
+  /**
+  * @brief left, right
+  *
+  */
   Node *left, *right;
 
   /**
