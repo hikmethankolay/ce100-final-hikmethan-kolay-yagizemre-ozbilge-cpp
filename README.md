@@ -1,8 +1,93 @@
-# Calculator Project Library Generation and Testing Template
+# Fitness Management System App
 
-## Overview
+## 
 
-This project provides a suite of modules aimed to show how Cmake used with Ctest. Also combines doxygen documentation and test coverage reports
+<style>
+</style>
+
+**I. Introduction**
+
+Fitness Management system is a project that uses C with  CMake and C# with .NET for
+cross-platform support and Doxygen to document code and unit tests. It is a
+console app that uses keyboard inputs to navigate.
+
+**II. System
+Architecture**  
+Whole management system uses standard C and C# file input/output library with
+file operation functions we created for this project, Which is:
+
+·       file_read() – Reads data
+from file
+
+·       file_write() – Deletes all
+data and writes wanted data to file
+
+·       file_edit() – changes
+specified record line
+
+·       file_line_delete() –
+Deletes a specified record line
+
+·       file_append() – Adds a
+record at the end of file
+
+**III. Functionalities**
+
+In menu, user can see,
+register, update, delete a record he wants. We also have a search and sort
+feature. We can record these types of data’s:
+
+**a. Member Management:**
+
+·       MemberID
+
+·       Full Name
+
+·       Birth Date
+
+·       Phone Number
+
+·       First Registration Date
+
+**b. Subscription Management:** 
+
+·        MemberID
+
+·       Starting date
+
+·       Finishing Date
+
+·       Subscription Tier
+
+**c. Class Management:**
+
+·       Tutor Name
+
+·       Date
+
+·       Starting hour
+
+·       Finishing Hour
+
+·       Student list
+
+**d. Payment Management:**
+
+·        MemberID
+
+·        Paid amount
+
+·        Payment Date
+
+·        Next Payment date
+
+We also have an LCS system that warns user when inputting
+a very similar record, OTP system that user have to enter a one time password
+when logging in and a Huffman coding Algorithm that compresses files.  
+**IV. Testing and Validation**
+
+We tested and documented whole system with gtest, Ctest
+and Xunit It has %95 coverage test and %100 success at unit test results
 
 ## Requirements
 
@@ -34,19 +119,13 @@ Run 4-install-windows-enviroment.bat to install required applications.
 
 Open powershell as admin and enter WSL then goto project folder and run 4-install-wsl-environment.sh to setup WSL environment
 
-
-
 ## Generate Development Environment
 
 You can run 9-clean-configure-app-windows.bat to generate Visual Studio Communit Edition Project of this file. Or You can use Cmake project development with Visual Studio Community Edition
 
-
-
 ## Build, Test and Package Application on Windows
 
 Run 7-build-app-windows.bat to build, test and generate packed binaries for your application on windows.
-
-
 
 Also you can run 7-build-doc-windows.bat to only generate documentation and 8-build-test-windows.bat to only test application. 
 
@@ -54,13 +133,9 @@ Also you can run 7-build-doc-windows.bat to only generate documentation and 8-bu
 
 Run 7-build-app-linux.sh to build, test and generate packed binaries for your application on WSL environment.
 
-
-
 ## Clean Project
 
 You can run 9-clean-project.bat to clean project outputs. 
-
-
 
 ## Supported Platforms
 
@@ -85,8 +160,6 @@ You can run 9-clean-project.bat to clean project outputs.
 |                    | Windows OS                                                        | Linux OS (WSL-Ubuntu 20.04)                                         |
 | ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
 | **Coverage Ratio** | ![Line Coverage](assets/doccoveragelibwin/badge_linecoverage.svg) | ![Line Coverage](assets/doccoverageliblinux/badge_linecoverage.svg) |
-
-
 
 #### Install Test Results to HTML Converter
 
@@ -149,8 +222,6 @@ you can use our public notes
 - [GitHub - ucoruh/ns3-wsl-win10-setup: ns3 windows 10 WSL2 setup and usage](https://github.com/ucoruh/ns3-wsl-win10-setup)
 
 After WSL installation, right click and open WSL bash and run `7-build-app-linux.sh` this will provide similart task with windows and will generate report and libraries on release folder. 
-
-
 
 ----
 
