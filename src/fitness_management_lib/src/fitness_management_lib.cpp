@@ -5,6 +5,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "../header/fitness_management_lib.h"
+#include "../header/sha1.hpp"
 #include <iostream>
 #include <limits>
 #include <fstream>
@@ -831,100 +832,13 @@ int user_change_password(string recovery_key, string new_password, string user_f
  * @return The SHA-1 hash value as a hexadecimal string.
  */
 string sha1(string &input) {
-  // Initialize variables
-  uint32_t h0 = 0x67452301;
-  uint32_t h1 = 0xEFCDAB89;
-  uint32_t h2 = 0x98BADCFE;
-  uint32_t h3 = 0x10325476;
-  uint32_t h4 = 0xC3D2E1F0;
-  // Pre-processing
-  uint64_t ml = input.length() * 8;
-  input += static_cast<char>(0x80); // Append a single '1' bit
-
-  while ((input.length() * 8) % 512 != 448) {
-    input += static_cast<char>(0x00); // Pad with zeros
-  }
-
-  // Append original message length
-  for (int i = 7; i >= 0; i--) {
-    input += static_cast<char>((ml >> (i * 8)) & 0xFF);
-  }
-
-  // Process the message in 512-bit blocks
-  for (size_t i = 0; i < input.length(); i += 64) {
-    uint32_t w[80];
-
-    for (int j = 0; j < 16; j++) {
-      w[j] = (input[i + j * 4] << 24) | (input[i + j * 4 + 1] << 16) |
-             (input[i + j * 4 + 2] << 8) | (input[i + j * 4 + 3]);
-    }
-
-    for (int j = 16; j < 80; j++) {
-      w[j] = (w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16]);
-      w[j] = (w[j] << 1) | (w[j] >> 31);
-    }
-
-    // Initialize hash value for this chunk
-    uint32_t a = h0;
-    uint32_t b = h1;
-    uint32_t c = h2;
-    uint32_t d = h3;
-    uint32_t e = h4;
-
-    // Main loop
-    for (int j = 0; j < 80; j++) {
-      uint32_t f, k;
-
-      if (j < 20) {
-        f = (b & c) | ((~b) & d);
-        k = 0x5A827999;
-      } else if (j < 40) {
-        f = b ^ c ^ d;
-        k = 0x6ED9EBA1;
-      } else if (j < 60) {
-        f = (b & c) | (b & d) | (c & d);
-        k = 0x8F1BBCDC;
-      } else {
-        f = b ^ c ^ d;
-        k = 0xCA62C1D6;
-      }
-
-      uint32_t temp = ((a << 5) | (a >> 27)) + f + e + k + w[j];
-      e = d;
-      d = c;
-      c = (b << 30) | (b >> 2);
-      b = a;
-      a = temp;
-    }
-
-    // Add this chunk's hash to result so far
-    h0 += a;
-    h1 += b;
-    h2 += c;
-    h3 += d;
-    h4 += e;
-  }
-
-  // Produce the final hash
-  uint8_t hash[20];
-
-  for (int i = 0; i < 4; i++) {
-    hash[i] = (h0 >> (24 - i * 8)) & 0xFF;
-    hash[i + 4] = (h1 >> (24 - i * 8)) & 0xFF;
-    hash[i + 8] = (h2 >> (24 - i * 8)) & 0xFF;
-    hash[i + 12] = (h3 >> (24 - i * 8)) & 0xFF;
-    hash[i + 16] = (h4 >> (24 - i * 8)) & 0xFF;
-  }
-
-  // Convert hash to string
-  string result;
-
-  for (int i = 0; i < 20; i++) {
-    result += "0123456789abcdef"[hash[i] >> 4];
-    result += "0123456789abcdef"[hash[i] & 0x0F];
-  }
-
-  return result;
+  // Create an instance of the SHA1 class
+  SHA1 sha1;
+  // Update the SHA1 instance with the data
+  sha1.update(input);
+  // Get the final hash value
+  string hash = sha1.final();
+  return hash;
 }
 
 /**

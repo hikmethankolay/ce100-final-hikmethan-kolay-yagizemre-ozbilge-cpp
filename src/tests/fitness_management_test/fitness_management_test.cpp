@@ -128,7 +128,7 @@ TEST_F(FitnessTest, TestFileDeleteFail_2) {
  * @brief Tests the user_register function.
  */
 TEST_F(FitnessTest, TestUserRegister) {
-  string testString = "249ba36000029bbe97499c03db5a9001f6b734ec/5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8/d0428bd530df11aa01dcc19bcf3890a62e161ac5";
+  string testString = "249ba36000029bbe97499c03db5a9001f6b734ec/5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8/29773a093e4c80375be4dd8738f4c6afb993b319";
   user_register("username", "password", "recoverykey", "usertest");
   EXPECT_EQ(testString, file_read("usertest", 'N'));
 }
@@ -137,7 +137,7 @@ TEST_F(FitnessTest, TestUserRegister) {
  * @brief Tests the user_change_password function.
  */
 TEST_F(FitnessTest, TestUserChangePassword) {
-  string testString = "249ba36000029bbe97499c03db5a9001f6b734ec/b09254de0dd15bd5e93518c4a951b5f1f2bad3c1/d0428bd530df11aa01dcc19bcf3890a62e161ac5";
+  string testString = "249ba36000029bbe97499c03db5a9001f6b734ec/f2c57870308dc87f432e5912d4de6f8e322721ba/29773a093e4c80375be4dd8738f4c6afb993b319";
   user_change_password("recoverykey", "newpassword", "usertest2");
   EXPECT_EQ(testString, file_read("usertest2", 'N'));
 }
