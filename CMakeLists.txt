@@ -103,10 +103,10 @@ if (WIN32 OR MSVC)
   endif()
 else()
   # Adjust the path as needed for your WSL or Linux installation
-  set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl")
-  set(OPENSSL_INCLUDE_DIR "/usr/local/opt/openssl/include")
-  set(OPENSSL_CRYPTO_LIBRARY "/usr/local/opt/openssl/lib/libcrypto.so")
-  set(OPENSSL_SSL_LIBRARY "/usr/local/opt/openssl/lib/libssl.so")
+set(OPENSSL_ROOT_DIR "/usr")
+set(OPENSSL_INCLUDE_DIR "/usr/include/openssl")
+set(OPENSSL_CRYPTO_LIBRARY "/usr/lib/x86_64-linux-gnu/libcrypto.so")
+set(OPENSSL_SSL_LIBRARY "/usr/lib/x86_64-linux-gnu/libssl.so")
 endif()
 
 # Manually set include directories and libraries
