@@ -4,6 +4,13 @@
 #include "gtest/gtest.h"
 #include "../../fitness_management_lib/header/fitness_management_lib.h"  // Adjust this include path based on your project structure
 #include <unordered_set>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include <openssl/hmac.h>
+#include <openssl/evp.h>
+#include <cstring>
 
 class FitnessTest : public ::testing::Test {
  protected:
@@ -181,24 +188,40 @@ TEST_F(FitnessTest, TestUserLoginFail_3) {
  * @brief Test case to verify OTP length
  */
 TEST_F(FitnessTest, TestOTPLength) {
-  std::string secretKey = generateSecretKey();
-  int length = 6;
-  std::string otp = generateOTP(secretKey, length);
-  EXPECT_EQ(otp.length(), length);
+  // Define your shared secret key
+  unsigned char key[] = "MZUXI3TFONZW2YLOMFTWK3LFNZ2HGZLDOJSXI33UOBVWK6I=";
+  size_t key_len = strlen((char *)key);
+  // Define the number of digits for the OTP
+  int digits = 6;  // Typically 6 or 8
+  // Get the current time interval since the epoch (T0)
+  time_t t0 = 0;  // Reference time (epoch)
+  uint64_t current_time_interval = get_time(t0);
+  // Generate the TOTP
+  uint32_t otp = TOTP(key, key_len, current_time_interval, digits);
+  string OTP = to_string(otp);
+  EXPECT_EQ(OTP.length(), digits);
 }
 
 /**
  * @brief Test case to verify OTP uniqueness
  */
 TEST_F(FitnessTest, TestOTPUniqueness) {
-  std::string secretKey = generateSecretKey();
-  int length = 6;
-  std::unordered_set<std::string> otpSet;
+  unsigned char key[] = "MZUXI3TFONZW2YLOMFTWK3LFNZ2HGZLDOJSXI33UOBVWK6I=";
+  size_t key_len = strlen((char *)key);
+  // Define the number of digits for the OTP
+  int digits = 6;  // Typically 6 or 8
+  // Get the current time interval since the epoch (T0)
+  time_t t0 = 0;  // Reference time (epoch)
+  unordered_set<string> otpSet;
   const int numIterations = 100;
 
   for (int i = 0; i < numIterations; ++i) {
-    std::string otp = generateOTP(secretKey, length);
-    otpSet.insert(otp);
+    // Update the current time interval for each iteration
+    uint64_t current_time_interval = get_time(t0) + i;
+    // Generate the TOTP
+    uint32_t otp = TOTP(key, key_len, current_time_interval, digits);
+    string OTP = to_string(otp);
+    otpSet.insert(OTP);
   }
 
   EXPECT_EQ(otpSet.size(), numIterations);

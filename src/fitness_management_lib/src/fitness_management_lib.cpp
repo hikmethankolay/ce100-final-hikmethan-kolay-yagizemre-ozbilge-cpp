@@ -16,6 +16,13 @@
 #include <queue>
 #include <unordered_map>
 #include <vector>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include <openssl/hmac.h>
+#include <openssl/evp.h>
+#include <cstring>
 
 using namespace std;
 
@@ -331,6 +338,121 @@ int checkLCS(string text, string file_name) {
   }
 
   return -1;
+}
+
+/**
+ * @brief Generates an HMAC digest using the given key and interval.
+ *
+ * @param key A pointer to the shared secret key.
+ * @param kl The length of the shared secret key.
+ * @param interval The counter value (time interval or event count).
+ * @return A pointer to the generated HMAC digest.
+ */
+uint8_t *hmac(unsigned char *key, int kl, uint64_t interval) {
+  return (uint8_t *)HMAC(EVP_sha1(), key, kl, (const unsigned char *)&interval, sizeof(interval), NULL, 0);
+}
+
+/**
+ * @brief Extracts a 32-bit dynamic truncation value from the given HMAC digest.
+ *
+ * @param digest A pointer to the HMAC digest.
+ * @return The 32-bit dynamic truncation value.
+ */
+uint32_t DT(uint8_t *digest) {
+  uint64_t offset;
+  uint32_t bin_code;
+#ifdef DEBUG
+  char mdString[40];
+
+  for (int i = 0; i < 20; i++)
+    sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
+
+  printf("HMAC digest: %s\n", mdString);
+#endif
+  // dynamically truncates hash
+  offset = digest[19] & 0x0f;
+  bin_code = (digest[offset] & 0x7f) << 24
+             | (digest[offset+1] & 0xff) << 16
+             | (digest[offset+2] & 0xff) << 8
+             | (digest[offset+3] & 0xff);
+#ifdef DEBUG
+  printf("OFFSET: %d\n", offset);
+  printf("\nDBC1: %d\n", bin_code);
+#endif
+  return bin_code;
+}
+
+/**
+ * @brief Modifies the dynamically truncated value to fit the desired number of digits.
+ *
+ * @param bin_code The dynamically truncated value.
+ * @param digits The number of digits for the generated OTP.
+ * @return The OTP truncated to the specified number of digits.
+ */
+uint32_t mod_hotp(uint32_t bin_code, int digits) {
+  int power = static_cast<int>(pow(10, digits));
+  uint32_t otp = bin_code % power;
+  return otp;
+}
+
+/**
+ * @brief Generates a One-Time Password (OTP) using the HMAC-Based One-Time Password (HOTP) algorithm.
+ *
+ * @param key A pointer to the shared secret key.
+ * @param kl The length of the shared secret key.
+ * @param interval The counter value (time interval or event count).
+ * @param digits The number of digits for the generated OTP.
+ * @return The generated OTP.
+ */
+uint32_t HOTP(uint8_t *key, size_t kl, uint64_t interval, int digits) {
+  uint8_t *digest;
+  uint32_t result;
+  uint32_t endianness;
+#ifdef DEBUG
+  printf("KEY IS: %s\n", key);
+  printf("KEY LEN IS: %zu\n", kl); // Use %zu for size_t
+  printf("COUNTER IS: %" PRIu64 "\n", interval); // Use PRIu64 for uint64_t
+#endif
+  endianness = 0xdeadbeef;
+
+  if ((*(const uint8_t *)&endianness) == 0xef) {
+    interval = ((interval & 0x00000000ffffffff) << 32) | ((interval & 0xffffffff00000000) >> 32);
+    interval = ((interval & 0x0000ffff0000ffff) << 16) | ((interval & 0xffff0000ffff0000) >> 16);
+    interval = ((interval & 0x00ff00ff00ff00ff) <<  8) | ((interval & 0xff00ff00ff00ff00) >>  8);
+  }
+
+  // First Phase: get the digest of the message using the provided key
+  digest = (uint8_t *)hmac(key, static_cast<int>(kl), interval);
+  // Second Phase: get the dbc from the algorithm
+  uint32_t dbc = DT(digest);
+  // Third Phase: calculate the mod_k of the dbc to get the correct number
+  result = mod_hotp(dbc, digits);
+  return result;
+}
+
+/**
+ * @brief Calculates the current time interval since a reference time T0.
+ *
+ * @param t0 The reference time.
+ * @return The current time interval since T0.
+ */
+time_t get_time(time_t t0) {
+  return static_cast<time_t>(floor((time(NULL) - t0) / TS));
+}
+
+/**
+ * @brief Generates a Time-Based One-Time Password (TOTP) using the given key and current time.
+ *
+ * @param key A pointer to the shared secret key.
+ * @param kl The length of the shared secret key.
+ * @param time The current time or time interval.
+ * @param digits The number of digits for the generated OTP.
+ * @return The generated TOTP.
+ */
+uint32_t TOTP(uint8_t *key, size_t kl, uint64_t time, int digits) {
+  uint32_t totp;
+  totp = HOTP(key, kl, time, digits);
+  return totp;
 }
 
 /**
@@ -700,47 +822,6 @@ int user_change_password(string recovery_key, string new_password, string user_f
     cout << "\nWrong Recovery Key";
     return -1;
   }
-}
-
-/**
- * @brief generate secret keys for OTP algorithm.
- *
- * @return ss as string.
- */
-string generateSecretKey() {
-  random_device rd;
-  mt19937 gen(rd());
-  uniform_int_distribution<> dis(0, 255);
-  stringstream ss;
-
-  for (int i = 0; i < 16; ++i) {
-    ss << setw(2) << setfill('0') << hex << dis(gen);
-  }
-
-  return ss.str();
-}
-
-/**
- * @brief OTP algorithm.
- * @param secretKey genereted secret key
- * @param length wanted length of the otp
- * @return otp.
- */
-string generateOTP(const string &secretKey, int length) {
-  string allowedCharacters = "0123456789";
-  string otp;
-  random_device rd;
-  mt19937 gen(rd());
-  uniform_int_distribution<size_t> dis(0, allowedCharacters.length() - 1);
-
-  for (int i = 0; i < length; ++i) {
-    size_t keyIndex = i % secretKey.length();
-    size_t charIndex = static_cast<size_t>(dis(gen));
-    char otpChar = allowedCharacters[(secretKey[keyIndex] + charIndex) % allowedCharacters.length()];
-    otp += otpChar;
-  }
-
-  return otp;
 }
 
 /**
@@ -1463,19 +1544,27 @@ int login_menu(bool isUnitTesting) {
   cin >> password;
 
   if (user_login(user_name,password,user_file) == 0) {
-    string secretKey = generateSecretKey();
-    string otp = generateOTP(secretKey, 6);
+    // Define your shared secret key
+    unsigned char key[] = "MZUXI3TFONZW2YLOMFTWK3LFNZ2HGZLDOJSXI33UOBVWK6I=";
+    size_t key_len = strlen((char *)key);
+    // Define the number of digits for the OTP
+    int digits = 6;  // Typically 6 or 8
+    // Get the current time interval since the epoch (T0)
+    time_t t0 = 0;  // Reference time (epoch)
+    uint64_t current_time_interval = get_time(t0);
+    // Generate the TOTP
+    uint32_t otp = TOTP(key, key_len, current_time_interval, digits);
     string user_input_otp;
     cout << "\nPlease enter single use code that we send you";
 
     if (isUnitTesting) {
-      user_input_otp = otp;
+      user_input_otp = to_string(otp);
     } else {
       cout << "\n" << otp << " is the code, this is just the simulation of scenario:";
       cin >> user_input_otp;
     }
 
-    if (user_input_otp == otp) {
+    if (user_input_otp == to_string(otp)) {
       main_menu(false);
     }
   }

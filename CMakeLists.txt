@@ -90,7 +90,33 @@ else()
   message(WARNING "[${ROOT}] Not supported with the current compiler.")
 endif()
 
+# Determine the OpenSSL root directory based on the operating system
+if (WIN32 OR MSVC)
+  set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-Win64")
+  set(OPENSSL_INCLUDE_DIR "C:/Program Files/OpenSSL-Win64/include")
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(OPENSSL_CRYPTO_LIBRARY "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MTd/libcrypto.lib")
+    set(OPENSSL_SSL_LIBRARY "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MTd/libssl.lib")
+  else()
+    set(OPENSSL_CRYPTO_LIBRARY "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MT/libcrypto.lib")
+    set(OPENSSL_SSL_LIBRARY "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MT/libssl.lib")
+  endif()
+else()
+  # Adjust the path as needed for your WSL or Linux installation
+  set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl")
+  set(OPENSSL_INCLUDE_DIR "/usr/local/opt/openssl/include")
+  set(OPENSSL_CRYPTO_LIBRARY "/usr/local/opt/openssl/lib/libcrypto.so")
+  set(OPENSSL_SSL_LIBRARY "/usr/local/opt/openssl/lib/libssl.so")
+endif()
 
+# Manually set include directories and libraries
+include_directories(${OPENSSL_INCLUDE_DIR})
+
+add_library(OpenSSL::Crypto STATIC IMPORTED)
+set_target_properties(OpenSSL::Crypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_CRYPTO_LIBRARY})
+
+add_library(OpenSSL::SSL STATIC IMPORTED)
+set_target_properties(OpenSSL::SSL PROPERTIES IMPORTED_LOCATION ${OPENSSL_SSL_LIBRARY})
 
 if(ENABLE_FITNESS_LIB)
 	add_subdirectory(${ROOT}/fitness_management_lib)
@@ -106,5 +132,3 @@ endif()
 
 # Include the Google Test framework
 # add_subdirectory(src/tests/googletest)
-
-

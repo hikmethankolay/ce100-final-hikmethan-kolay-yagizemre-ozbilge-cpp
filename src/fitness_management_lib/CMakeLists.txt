@@ -21,10 +21,11 @@ source_group("src" FILES ${LIB_SOURCES})
 add_library(${LIBNAME} STATIC ${LIB_HEADERS} ${LIB_SOURCES}) # for dynamic library use SHARED
 
 target_include_directories(${LIBNAME} PUBLIC
-						   ${CMAKE_CURRENT_SOURCE_DIR}/header)
+					${CMAKE_CURRENT_SOURCE_DIR}/header
+					${OPENSSL_INCLUDE_DIR})
 
 # Add any dependencies or compile options specific to crypto
-target_link_libraries(${LIBNAME} PRIVATE)
+target_link_libraries(${LIBNAME} PRIVATE OpenSSL::Crypto OpenSSL::SSL)
 
 # creates preprocessor definition used for library exports
 add_compile_definitions("FITNESS_MANAGEMENT_LIB_EXPORTS")

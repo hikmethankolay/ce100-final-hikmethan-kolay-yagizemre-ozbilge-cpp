@@ -11,6 +11,10 @@
 #include <queue>
 #include <unordered_map>
 #include <vector>
+#include<stdint.h>
+#include<stdlib.h>
+
+#define TS 30   /* time step in seconds, default value */
 
 /**
  * @brief Using the standard C++ namespace to simplify code with standard library elements.
@@ -609,5 +613,54 @@ string LCS(const string &text1, const string &text2);
  * @return -1 on fail
  */
 int checkLCS(string text, string file_name);
+
+
+/**
+ * @brief Generates a One-Time Password (OTP) using the HMAC-Based One-Time Password (HOTP) algorithm.
+ *
+ * @param key A pointer to the shared secret key.
+ * @param kl The length of the shared secret key.
+ * @param interval The counter value (time interval or event count).
+ * @param digits The number of digits for the generated OTP.
+ * @return The generated OTP.
+ */
+uint32_t HOTP(uint8_t *key, size_t kl, uint64_t interval, int digits);
+
+/**
+ * @brief Generates an HMAC digest using the given key and interval.
+ *
+ * @param key A pointer to the shared secret key.
+ * @param kl The length of the shared secret key.
+ * @param interval The counter value (time interval or event count).
+ * @return A pointer to the generated HMAC digest.
+ */
+uint8_t *hmac(unsigned char *key, int kl, uint64_t interval);
+
+/**
+ * @brief Extracts a 32-bit dynamic truncation value from the given HMAC digest.
+ *
+ * @param digest A pointer to the HMAC digest.
+ * @return The 32-bit dynamic truncation value.
+ */
+uint32_t DT(uint8_t *digest);
+
+/**
+ * @brief Generates a Time-Based One-Time Password (TOTP) using the given key and current time.
+ *
+ * @param key A pointer to the shared secret key.
+ * @param kl The length of the shared secret key.
+ * @param time The current time or time interval.
+ * @param digits The number of digits for the generated OTP.
+ * @return The generated TOTP.
+ */
+uint32_t TOTP(uint8_t *key, size_t kl, uint64_t time, int digits);
+
+/**
+ * @brief Gets the current time since a reference time T0.
+ *
+ * @param T0 The reference time.
+ * @return The current time since T0.
+ */
+time_t get_time(time_t T0);
 
 #endif // FITNESS_MANAGEMENT_LIB_H
