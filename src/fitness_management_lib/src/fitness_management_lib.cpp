@@ -6,15 +6,12 @@
 
 #include "../header/fitness_management_lib.h"
 #include "../header/sha1.hpp"
+#include "../header/aes.h"
 #include <iostream>
 #include <limits>
 #include <fstream>
 #include <string>
-#include <codecvt>
-#include <random>
 #include <sstream>
-#include <iomanip>
-#include <queue>
 #include <unordered_map>
 #include <vector>
 #include <stdio.h>
@@ -38,7 +35,7 @@ using namespace std;
  * @brief Struct for menu functions.
  *
  */
-struct manin_menu_variables main_menu_choice;
+struct main_menu_variables main_menu_choice;
 /**
  * @brief Struct for menu functions.
  *
@@ -46,6 +43,420 @@ struct manin_menu_variables main_menu_choice;
 struct sub_menu_variables sub_menu;
 
 fstream myFile;  /**< File stream object for file operations. */
+
+/**
+ * @brief Decrypts the sub-round key.
+ *
+ * @param state The current state array.
+ * @param roundKey The round key for the decryption.
+ * @return void
+ */
+void decrypt_SubRoundKey(unsigned char *state, unsigned char *roundKey) {
+  for (int i = 0; i < 16; i++) {
+    state[i] ^= roundKey[i];
+  }
+}
+
+/**
+ * @brief Applies the inverse shift rows transformation to the state.
+ *
+ * @param state The current state array.
+ * @return void
+ */
+void decrypt_InverseMixColumns(unsigned char *state) {
+  unsigned char tmp[16];
+  tmp[0] = (unsigned char)mul14[state[0]] ^ mul11[state[1]] ^ mul13[state[2]] ^ mul9[state[3]];
+  tmp[1] = (unsigned char)mul9[state[0]] ^ mul14[state[1]] ^ mul11[state[2]] ^ mul13[state[3]];
+  tmp[2] = (unsigned char)mul13[state[0]] ^ mul9[state[1]] ^ mul14[state[2]] ^ mul11[state[3]];
+  tmp[3] = (unsigned char)mul11[state[0]] ^ mul13[state[1]] ^ mul9[state[2]] ^ mul14[state[3]];
+  tmp[4] = (unsigned char)mul14[state[4]] ^ mul11[state[5]] ^ mul13[state[6]] ^ mul9[state[7]];
+  tmp[5] = (unsigned char)mul9[state[4]] ^ mul14[state[5]] ^ mul11[state[6]] ^ mul13[state[7]];
+  tmp[6] = (unsigned char)mul13[state[4]] ^ mul9[state[5]] ^ mul14[state[6]] ^ mul11[state[7]];
+  tmp[7] = (unsigned char)mul11[state[4]] ^ mul13[state[5]] ^ mul9[state[6]] ^ mul14[state[7]];
+  tmp[8] = (unsigned char)mul14[state[8]] ^ mul11[state[9]] ^ mul13[state[10]] ^ mul9[state[11]];
+  tmp[9] = (unsigned char)mul9[state[8]] ^ mul14[state[9]] ^ mul11[state[10]] ^ mul13[state[11]];
+  tmp[10] = (unsigned char)mul13[state[8]] ^ mul9[state[9]] ^ mul14[state[10]] ^ mul11[state[11]];
+  tmp[11] = (unsigned char)mul11[state[8]] ^ mul13[state[9]] ^ mul9[state[10]] ^ mul14[state[11]];
+  tmp[12] = (unsigned char)mul14[state[12]] ^ mul11[state[13]] ^ mul13[state[14]] ^ mul9[state[15]];
+  tmp[13] = (unsigned char)mul9[state[12]] ^ mul14[state[13]] ^ mul11[state[14]] ^ mul13[state[15]];
+  tmp[14] = (unsigned char)mul13[state[12]] ^ mul9[state[13]] ^ mul14[state[14]] ^ mul11[state[15]];
+  tmp[15] = (unsigned char)mul11[state[12]] ^ mul13[state[13]] ^ mul9[state[14]] ^ mul14[state[15]];
+
+  for (int i = 0; i < 16; i++) {
+    state[i] = tmp[i];
+  }
+}
+
+
+/**
+ * @brief Applies the inverse shift rows transformation to the state.
+ *
+ * @param state The current state array.
+ * @return void
+ */
+void decrypt_ShiftRows(unsigned char *state) {
+  unsigned char tmp[16];
+  /* Column 1 */
+  tmp[0] = state[0];
+  tmp[1] = state[13];
+  tmp[2] = state[10];
+  tmp[3] = state[7];
+  /* Column 2 */
+  tmp[4] = state[4];
+  tmp[5] = state[1];
+  tmp[6] = state[14];
+  tmp[7] = state[11];
+  /* Column 3 */
+  tmp[8] = state[8];
+  tmp[9] = state[5];
+  tmp[10] = state[2];
+  tmp[11] = state[15];
+  /* Column 4 */
+  tmp[12] = state[12];
+  tmp[13] = state[9];
+  tmp[14] = state[6];
+  tmp[15] = state[3];
+
+  for (int i = 0; i < 16; i++) {
+    state[i] = tmp[i];
+  }
+}
+
+
+/**
+ * @brief Applies the inverse sub bytes transformation to the state.
+ *
+ * @param state The current state array.
+ * @return void
+ */
+void decrypt_SubBytes(unsigned char *state) {
+  for (int i = 0; i < 16; i++) { // Perform substitution to each of the 16 bytes
+    state[i] = inv_s[state[i]];
+  }
+}
+
+
+/**
+ * @brief Applies one round of decryption to the state using the provided key.
+ *
+ * @param state The current state array.
+ * @param key The round key for the decryption.
+ * @return void
+ */
+void decrypt_Round(unsigned char *state, unsigned char *key) {
+  decrypt_SubRoundKey(state, key);
+  decrypt_InverseMixColumns(state);
+  decrypt_ShiftRows(state);
+  decrypt_SubBytes(state);
+}
+
+/**
+ * @brief Applies the initial round of decryption to the state using the provided key.
+ *
+ * @param state The current state array.
+ * @param key The round key for the decryption.
+ * @return void
+ */
+void decrypt_InitialRound(unsigned char *state, unsigned char *key) {
+  decrypt_SubRoundKey(state, key);
+  decrypt_ShiftRows(state);
+  decrypt_SubBytes(state);
+}
+
+
+/**
+ * @brief Decrypts an AES encrypted message.
+ *
+ * @param encryptedMessage The encrypted message to be decrypted.
+ * @param expandedKey The expanded key used for decryption.
+ * @param decryptedMessage The buffer to store the decrypted message.
+ * @return void
+ */
+void decrypt_AESDecrypt(unsigned char *encryptedMessage, unsigned char *expandedKey, unsigned char *decryptedMessage) {
+  unsigned char state[16]; // Stores the first 16 bytes of encrypted message
+
+  for (int i = 0; i < 16; i++) {
+    state[i] = encryptedMessage[i];
+  }
+
+  decrypt_InitialRound(state, expandedKey+160);
+  int numberOfRounds = 9;
+
+  for (int i = 8; i >= 0; i--) {
+    decrypt_Round(state, expandedKey + (16 * (i + 1)));
+  }
+
+  decrypt_SubRoundKey(state, expandedKey); // Final round
+
+  // Copy decrypted state to buffer
+  for (int i = 0; i < 16; i++) {
+    decryptedMessage[i] = state[i];
+  }
+}
+
+/**
+ * @brief Encrypts the state using the provided round key.
+ *
+ * @param state The current state array.
+ * @param roundKey The round key for the encryption.
+ * @return void
+ */
+void encrypt_AddRoundKey(unsigned char *state, unsigned char *roundKey) {
+  for (int i = 0; i < 16; i++) {
+    state[i] ^= roundKey[i];
+  }
+}
+
+/**
+ * @brief Applies the sub bytes transformation to the state.
+ *
+ * @param state The current state array.
+ * @return void
+ */
+void encrypt_SubBytes(unsigned char *state) {
+  for (int i = 0; i < 16; i++) {
+    state[i] = s[state[i]];
+  }
+}
+
+/**
+ * @brief Applies the shift rows transformation to the state.
+ *
+ * @param state The current state array.
+ * @return void
+ */
+void encrypt_ShiftRows(unsigned char *state) {
+  unsigned char tmp[16];
+  /* Column 1 */
+  tmp[0] = state[0];
+  tmp[1] = state[5];
+  tmp[2] = state[10];
+  tmp[3] = state[15];
+  /* Column 2 */
+  tmp[4] = state[4];
+  tmp[5] = state[9];
+  tmp[6] = state[14];
+  tmp[7] = state[3];
+  /* Column 3 */
+  tmp[8] = state[8];
+  tmp[9] = state[13];
+  tmp[10] = state[2];
+  tmp[11] = state[7];
+  /* Column 4 */
+  tmp[12] = state[12];
+  tmp[13] = state[1];
+  tmp[14] = state[6];
+  tmp[15] = state[11];
+
+  for (int i = 0; i < 16; i++) {
+    state[i] = tmp[i];
+  }
+}
+
+
+/**
+ * @brief Applies the mix columns transformation to the state.
+ *
+ * @param state The current state array.
+ * @return void
+ */
+void encrypt_MixColumns(unsigned char *state) {
+  unsigned char tmp[16];
+  tmp[0] = (unsigned char) mul2[state[0]] ^ mul3[state[1]] ^ state[2] ^ state[3];
+  tmp[1] = (unsigned char) state[0] ^ mul2[state[1]] ^ mul3[state[2]] ^ state[3];
+  tmp[2] = (unsigned char) state[0] ^ state[1] ^ mul2[state[2]] ^ mul3[state[3]];
+  tmp[3] = (unsigned char) mul3[state[0]] ^ state[1] ^ state[2] ^ mul2[state[3]];
+  tmp[4] = (unsigned char)mul2[state[4]] ^ mul3[state[5]] ^ state[6] ^ state[7];
+  tmp[5] = (unsigned char)state[4] ^ mul2[state[5]] ^ mul3[state[6]] ^ state[7];
+  tmp[6] = (unsigned char)state[4] ^ state[5] ^ mul2[state[6]] ^ mul3[state[7]];
+  tmp[7] = (unsigned char)mul3[state[4]] ^ state[5] ^ state[6] ^ mul2[state[7]];
+  tmp[8] = (unsigned char)mul2[state[8]] ^ mul3[state[9]] ^ state[10] ^ state[11];
+  tmp[9] = (unsigned char)state[8] ^ mul2[state[9]] ^ mul3[state[10]] ^ state[11];
+  tmp[10] = (unsigned char)state[8] ^ state[9] ^ mul2[state[10]] ^ mul3[state[11]];
+  tmp[11] = (unsigned char)mul3[state[8]] ^ state[9] ^ state[10] ^ mul2[state[11]];
+  tmp[12] = (unsigned char)mul2[state[12]] ^ mul3[state[13]] ^ state[14] ^ state[15];
+  tmp[13] = (unsigned char)state[12] ^ mul2[state[13]] ^ mul3[state[14]] ^ state[15];
+  tmp[14] = (unsigned char)state[12] ^ state[13] ^ mul2[state[14]] ^ mul3[state[15]];
+  tmp[15] = (unsigned char)mul3[state[12]] ^ state[13] ^ state[14] ^ mul2[state[15]];
+
+  for (int i = 0; i < 16; i++) {
+    state[i] = tmp[i];
+  }
+}
+
+
+/**
+ * @brief Applies one round of encryption to the state using the provided key.
+ *
+ * @param state The current state array.
+ * @param key The round key for the encryption.
+ * @return void
+ */
+void encrypt_Round(unsigned char *state, unsigned char *key) {
+  encrypt_SubBytes(state);
+  encrypt_ShiftRows(state);
+  encrypt_MixColumns(state);
+  encrypt_AddRoundKey(state, key);
+}
+
+/**
+ * @brief Applies the final round of encryption to the state using the provided key.
+ *
+ * @param state The current state array.
+ * @param key The round key for the encryption.
+ * @return void
+ */
+void encrypt_FinalRound(unsigned char *state, unsigned char *key) {
+  encrypt_SubBytes(state);
+  encrypt_ShiftRows(state);
+  encrypt_AddRoundKey(state, key);
+}
+
+
+/**
+ * @brief Encrypts a message using AES encryption.
+ *
+ * @param message The original message to be encrypted.
+ * @param expandedKey The expanded key used for encryption.
+ * @param encryptedMessage The buffer to store the encrypted message.
+ * @return void
+ */
+void encrypt_AESEncrypt(unsigned char *message, unsigned char *expandedKey, unsigned char *encryptedMessage) {
+  unsigned char state[16]; // Stores the first 16 bytes of original message
+
+  for (int i = 0; i < 16; i++) {
+    state[i] = message[i];
+  }
+
+  int numberOfRounds = 9;
+  encrypt_AddRoundKey(state, expandedKey); // Initial round
+
+  for (int i = 0; i < numberOfRounds; i++) {
+    encrypt_Round(state, expandedKey + (16 * (i+1)));
+  }
+
+  encrypt_FinalRound(state, expandedKey + 160);
+
+  // Copy encrypted state to buffer
+  for (int i = 0; i < 16; i++) {
+    encryptedMessage[i] = state[i];
+  }
+}
+/**
+ * @brief Decrypts a message from a file using AES decryption.
+ *
+ * @param file_name The name of the file containing the encrypted message.
+ * @return The decrypted message as a string.
+ */
+string AESDe(string file_name) {
+  // Open the file in binary mode
+  ifstream infile(file_name, ios::in | ios::binary);
+
+  if (!infile.is_open()) {
+    cerr << "Error opening file: " << file_name << endl;
+    return "-1";
+  }
+
+  // Read the original length
+  int originalLen;
+  infile.read(reinterpret_cast<char *>(&originalLen), sizeof(int));
+  // Get the length of the remaining file
+  infile.seekg(0, infile.end);
+  streamoff fileLenStreamOff = infile.tellg();
+
+  if (fileLenStreamOff > std::numeric_limits<int>::max()) {
+    cerr << "File is too large to handle!" << endl;
+    return "";
+  }
+
+  int fileLen = static_cast<int>(fileLenStreamOff) - sizeof(int); // Exclude the length of the original length field
+  infile.seekg(sizeof(int), infile.beg);
+  // Read the encrypted message
+  unsigned char *encryptedMessage = new unsigned char[fileLen];
+  infile.read(reinterpret_cast<char *>(encryptedMessage), fileLen);
+  infile.close();
+  // Read in the key
+  string keystr = "66 69 74 6E 65 73 73 61 70 70 61 65 73 61 65 73";
+  istringstream hex_chars_stream(keystr);
+  unsigned char key[16];
+  int i = 0;
+  unsigned int c;
+
+  while (hex_chars_stream >> hex >> c) {
+    key[i] = c;
+    i++;
+  }
+
+  unsigned char expandedKey[176];
+  KeyExpansion(key, expandedKey);
+  int messageLen = fileLen;
+  unsigned char *decryptedMessage = new unsigned char[messageLen];
+
+  // Decrypt the message in 16-byte blocks
+  for (int i = 0; i < messageLen; i += 16) {
+    decrypt_AESDecrypt(encryptedMessage + i, expandedKey, decryptedMessage + i);
+  }
+
+  // Convert the decrypted message to a string without padding
+  string strMessage(reinterpret_cast<char *>(decryptedMessage), originalLen);
+  // Free dynamically allocated memory
+  delete[] encryptedMessage;
+  delete[] decryptedMessage;
+  return strMessage;
+}
+
+/**
+ * @brief Encrypts a message and saves it to a file using AES encryption.
+ *
+ * @param text_to_encrypt The message to be encrypted.
+ * @param file_name The name of the file to save the encrypted message.
+ * @return 0 on success.
+ */
+int AESEn(string text_to_encrypt, string file_name) {
+  // Pad message to 16 bytes
+  int originalLen = static_cast<int>(text_to_encrypt.length());
+  int paddedMessageLen = ((originalLen / 16) + 1) * 16;
+  unsigned char *paddedMessage = new unsigned char[paddedMessageLen];
+
+  for (int i = 0; i < paddedMessageLen; i++) {
+    if (i < originalLen) {
+      paddedMessage[i] = text_to_encrypt[i];
+    } else {
+      paddedMessage[i] = 0; // Padding with zeroes
+    }
+  }
+
+  unsigned char *encryptedMessage = new unsigned char[paddedMessageLen];
+  string str = "66 69 74 6E 65 73 73 61 70 70 61 65 73 61 65 73";
+  istringstream hex_chars_stream(str);
+  unsigned char key[16];
+  int i = 0;
+  unsigned int c;
+
+  while (hex_chars_stream >> hex >> c) {
+    key[i] = c;
+    i++;
+  }
+
+  unsigned char expandedKey[176];
+  KeyExpansion(key, expandedKey);
+
+  for (int i = 0; i < paddedMessageLen; i += 16) {
+    encrypt_AESEncrypt(paddedMessage + i, expandedKey, encryptedMessage + i);
+  }
+
+  ofstream outfile(file_name, ios::out | ios::binary);
+
+  if (outfile.is_open()) {
+    outfile.write(reinterpret_cast<char *>(&originalLen), sizeof(int));
+    outfile.write(reinterpret_cast<char *>(encryptedMessage), paddedMessageLen);
+    outfile.close();
+  }
+
+  delete[] paddedMessage;
+  delete[] encryptedMessage;
+  return 0;
+}
 
 /**
  * @brief Calculates frequency of characters in the input text.
@@ -293,20 +704,12 @@ string LCS(const string &text1, const string &text2) {
  * @return -1 on fail
  */
 int checkLCS(string text, string file_name) {
-  ifstream myFile(file_name + ".bin", ios::binary);
+  string content = AESDe(file_name + ".bin");
 
-  if (!myFile.is_open()) {
+  if (content == "-1") {
     return -1;
   }
 
-  // Get the size of the file
-  myFile.seekg(0, ios::end);
-  streamoff fileSize = myFile.tellg();
-  myFile.seekg(0, ios::beg);
-  // Read the entire file into a string
-  string content(fileSize, '\0');
-  myFile.read(&content[0], fileSize);
-  myFile.close(); // Close the file
   // Decode the content and return it
   ifstream inFile;
   inFile.open(file_name + "_huffman.bin", ios::binary);
@@ -474,15 +877,7 @@ int file_write(string file_name, string text, bool isFileNew) {
   unordered_map<char, string> codes;
   buildCodes(root, "", codes);
   string encodedText = encode(text, codes);
-  // Open the binary file for writing
-  ofstream outFile(file_name + ".bin", ios::binary);
-
-  // Write the encoded binary data to the binary file
-  for (char i : encodedText) {
-    outFile.write(&i, sizeof(char));
-  }
-
-  outFile.close(); // Close the file
+  AESEn(encodedText,file_name+".bin");
   // Open the Huffman file for writing
   ofstream outFileHuffman(file_name + "_huffman.bin", ios::binary);
   // Write the Huffman tree to the Huffman file
@@ -499,21 +894,12 @@ int file_write(string file_name, string text, bool isFileNew) {
  * @return The contents of the file as a statically allocated string.
  */
 string file_read(string file_name, const char print_to_console) {
-  ifstream myFile(file_name + ".bin", ios::binary);
+  string content = AESDe(file_name + ".bin");
 
-  if (!myFile.is_open()) {
-    cout << "File operation failed, There is no record" << endl;
+  if (content == "-1") {
     return "-1";
   }
 
-  // Get the size of the file
-  myFile.seekg(0, ios::end);
-  streamoff fileSize = myFile.tellg();
-  myFile.seekg(0, ios::beg);
-  // Read the entire file into a string
-  string content(fileSize, '\0');
-  myFile.read(&content[0], fileSize);
-  myFile.close(); // Close the file
   // Decode the content and return it
   ifstream inFile;
   inFile.open(file_name + "_huffman.bin", ios::binary);

@@ -229,7 +229,7 @@ struct login_menu_variables {
  * @brief Struct for main menu.
  *
 */
-struct manin_menu_variables {
+struct main_menu_variables {
   /**
   * @brief a varible to control app's running state.
   */

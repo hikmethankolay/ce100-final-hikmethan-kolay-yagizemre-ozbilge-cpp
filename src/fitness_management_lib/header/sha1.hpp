@@ -1,23 +1,17 @@
-/*
-    sha1.hpp - source code of
-
-    ============
-    SHA-1 in C++
-    ============
-
-    100% Public Domain.
-
-    Original C Code
-        -- Steve Reid <steve@edmweb.com>
-    Small changes to fit into bglibs
-        -- Bruce Guenter <bruce@untroubled.org>
-    Translation to simpler C++ Code
-        -- Volker Diels-Grabsch <v@njh.eu>
-    Safety fixes
-        -- Eugene Hopkinson <slowriot at voxelstorm dot com>
-    Header-only library
-        -- Zlatko Michailov <zlatko@michailov.org>
-*/
+/**
+ * @file sha1.hpp
+ * @brief Header file for the SHA-1 implementation in C++.
+ *
+ * This file contains the class definition and functions for computing SHA-1 hashes.
+ * 
+ * 100% Public Domain.
+ * 
+ * Original C Code: Steve Reid <steve@edmweb.com>
+ * Small changes to fit into bglibs: Bruce Guenter <bruce@untroubled.org>
+ * Translation to simpler C++ Code: Volker Diels-Grabsch <v@njh.eu>
+ * Safety fixes: Eugene Hopkinson <slowriot at voxelstorm dot com>
+ * Header-only library: Zlatko Michailov <zlatko@michailov.org>
+ */
 
 #ifndef SHA1_HPP
 #define SHA1_HPP
@@ -30,14 +24,37 @@
 #include <sstream>
 #include <string>
 
-
+/**
+ * @class SHA1
+ * @brief Class for computing SHA-1 hashes.
+ */
 class SHA1
 {
 public:
+    /**
+     * @brief Constructs a SHA1 object and initializes the state.
+     */
     SHA1();
+    /**
+     * @brief Updates the SHA-1 hash with a string.
+     * @param s The input string.
+     */
     void update(const std::string &s);
+    /**
+     * @brief Updates the SHA-1 hash with data from an input stream.
+     * @param is The input stream.
+     */
     void update(std::istream &is);
+    /**
+     * @brief Finalizes the SHA-1 hash computation and returns the hash.
+     * @return The computed SHA-1 hash as a hexadecimal string.
+     */
     std::string final();
+    /**
+     * @brief Computes the SHA-1 hash of a file.
+     * @param filename The name of the file.
+     * @return The computed SHA-1 hash as a hexadecimal string.
+     */
     static std::string from_file(const std::string &filename);
 
 private:
@@ -50,7 +67,12 @@ private:
 static const size_t BLOCK_INTS = 16;  /* number of 32bit integers per SHA1 block */
 static const size_t BLOCK_BYTES = BLOCK_INTS * 4;
 
-
+/**
+ * @brief Resets the SHA-1 state.
+ * @param digest The digest array to reset.
+ * @param buffer The buffer to reset.
+ * @param transforms The transform count to reset.
+ */
 inline static void reset(uint32_t digest[], std::string &buffer, uint64_t &transforms)
 {
     /* SHA1 initialization constants */
@@ -65,30 +87,55 @@ inline static void reset(uint32_t digest[], std::string &buffer, uint64_t &trans
     transforms = 0;
 }
 
-
+/**
+ * @brief Performs a left circular rotation on a 32-bit integer.
+ * @param value The value to rotate.
+ * @param bits The number of bits to rotate.
+ * @return The rotated value.
+ */
 inline static uint32_t rol(const uint32_t value, const size_t bits)
 {
     return (value << bits) | (value >> (32 - bits));
 }
 
-
+/**
+ * @brief Computes the SHA-1 block function.
+ * @param block The current block.
+ * @param i The index in the block.
+ * @return The computed block value.
+ */
 inline static uint32_t blk(const uint32_t block[BLOCK_INTS], const size_t i)
 {
     return rol(block[(i+13)&15] ^ block[(i+8)&15] ^ block[(i+2)&15] ^ block[i], 1);
 }
 
 
-/*
- * (R0+R1), R2, R3, R4 are the different operations used in SHA1
+/**
+ * @brief Performs the R0 operation in the SHA-1 algorithm.
+ * @param block The current block.
+ * @param v The value of the variable a.
+ * @param w Reference to the variable b.
+ * @param x The value of the variable c.
+ * @param y The value of the variable d.
+ * @param z Reference to the variable e.
+ * @param i The index in the block.
  */
-
 inline static void R0(const uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     z += ((w&(x^y))^y) + block[i] + 0x5a827999 + rol(v, 5);
     w = rol(w, 30);
 }
 
-
+/**
+ * @brief Performs the R1 operation in the SHA-1 algorithm.
+ * @param block The current block.
+ * @param v The value of the variable a.
+ * @param w Reference to the variable b.
+ * @param x The value of the variable c.
+ * @param y The value of the variable d.
+ * @param z Reference to the variable e.
+ * @param i The index in the block.
+ */
 inline static void R1(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
@@ -96,6 +143,16 @@ inline static void R1(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w,
     w = rol(w, 30);
 }
 
+/**
+ * @brief Performs the R2 operation in the SHA-1 algorithm.
+ * @param block The current block.
+ * @param v The value of the variable a.
+ * @param w Reference to the variable b.
+ * @param x The value of the variable c.
+ * @param y The value of the variable d.
+ * @param z Reference to the variable e.
+ * @param i The index in the block.
+ */
 
 inline static void R2(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
@@ -104,7 +161,16 @@ inline static void R2(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w,
     w = rol(w, 30);
 }
 
-
+/**
+ * @brief Performs the R3 operation in the SHA-1 algorithm.
+ * @param block The current block.
+ * @param v The value of the variable a.
+ * @param w Reference to the variable b.
+ * @param x The value of the variable c.
+ * @param y The value of the variable d.
+ * @param z Reference to the variable e.
+ * @param i The index in the block.
+ */
 inline static void R3(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
@@ -112,7 +178,16 @@ inline static void R3(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w,
     w = rol(w, 30);
 }
 
-
+/**
+ * @brief Performs the R4 operation in the SHA-1 algorithm.
+ * @param block The current block.
+ * @param v The value of the variable a.
+ * @param w Reference to the variable b.
+ * @param x The value of the variable c.
+ * @param y The value of the variable d.
+ * @param z Reference to the variable e.
+ * @param i The index in the block.
+ */
 inline static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const size_t i)
 {
     block[i] = blk(block, i);
@@ -121,10 +196,12 @@ inline static void R4(uint32_t block[BLOCK_INTS], const uint32_t v, uint32_t &w,
 }
 
 
-/*
- * Hash a single 512-bit block. This is the core of the algorithm.
+/**
+ * @brief Transforms a single 512-bit block.
+ * @param digest The current state of the digest.
+ * @param block The block to transform.
+ * @param transforms The count of transformations.
  */
-
 inline static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint64_t &transforms)
 {
     /* Copy digest[] to working vars */
@@ -227,7 +304,11 @@ inline static void transform(uint32_t digest[], uint32_t block[BLOCK_INTS], uint
     transforms++;
 }
 
-
+/**
+ * @brief Converts a string buffer to a SHA-1 block.
+ * @param buffer The input buffer.
+ * @param block The output block.
+ */
 inline static void buffer_to_block(const std::string &buffer, uint32_t block[BLOCK_INTS])
 {
     /* Convert the std::string (byte buffer) to a uint32_t array (MSB) */
@@ -240,20 +321,28 @@ inline static void buffer_to_block(const std::string &buffer, uint32_t block[BLO
     }
 }
 
-
+/**
+ * @brief Constructs a SHA1 object and initializes the state.
+ */
 inline SHA1::SHA1()
 {
     reset(digest, buffer, transforms);
 }
 
-
+/**
+ * @brief Updates the SHA-1 hash with a string.
+ * @param s The input string.
+ */
 inline void SHA1::update(const std::string &s)
 {
     std::istringstream is(s);
     update(is);
 }
 
-
+/**
+ * @brief Updates the SHA-1 hash with data from an input stream.
+ * @param is The input stream.
+ */
 inline void SHA1::update(std::istream &is)
 {
     while (true)
@@ -273,10 +362,10 @@ inline void SHA1::update(std::istream &is)
 }
 
 
-/*
- * Add padding and return the message digest.
+/**
+ * @brief Finalizes the SHA-1 hash computation and returns the hash.
+ * @return The computed SHA-1 hash as a hexadecimal string.
  */
-
 inline std::string SHA1::final()
 {
     /* Total number of hashed bits */
@@ -321,7 +410,11 @@ inline std::string SHA1::final()
     return result.str();
 }
 
-
+/**
+ * @brief Computes the SHA-1 hash of a file.
+ * @param filename The name of the file.
+ * @return The computed SHA-1 hash as a hexadecimal string.
+ */
 inline std::string SHA1::from_file(const std::string &filename)
 {
     std::ifstream stream(filename.c_str(), std::ios::binary);
