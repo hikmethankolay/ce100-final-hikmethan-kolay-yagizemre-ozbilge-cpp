@@ -328,8 +328,8 @@ void encrypt_AESEncrypt(unsigned char *message, unsigned char *expandedKey, unsi
     state[i] = message[i];
   }
 
-  int numberOfRounds = 9;
   encrypt_AddRoundKey(state, expandedKey); // Initial round
+  int numberOfRounds = 9;
 
   for (int i = 0; i < numberOfRounds; i++) {
     encrypt_Round(state, expandedKey + (16 * (i+1)));
